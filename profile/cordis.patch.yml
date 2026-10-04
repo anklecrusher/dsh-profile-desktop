@@ -454,3 +454,29 @@
         headers:
           Authorization: !!js '`Bearer ${process.env.TAVILY_API_KEY}`'
         toolCallTimeoutMs: 180000
+- id: mnemon
+  name: dsh-mnemon
+  config:
+    remoteAccess: read-only
+    timeoutMs: 10000
+    defaultRecallLimit: 10
+    embedding:
+      enabled: false
+      endpoint: http://localhost:11434
+      model: nomic-embed-text
+    recallQuality:
+      policy: strict-v1
+      lowScoreThreshold: 0.25
+      highScoreThreshold: 0.6
+      candidateMultiplier: 3
+      maxMediumResults: 4
+      maxUnknownResults: 2
+    routingGuidance: true
+    tabEnabled: true
+    writeEnabled: true
+    lifecycleEnabled: true
+    recallMode: guided
+    writebackMode: guided
+    idleReviewMs: 30000
+    storageScope: custom
+    dataDir: D:\Users\ankle crusher\Documents\.mnemon

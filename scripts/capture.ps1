@@ -40,6 +40,15 @@ $Files = @(
     'cordis.yml'
 )
 
+# Tracked outside the profile directory: the user-global instruction file, read
+# by dsh-agent-instructions as join($DSH_HOME, 'AGENTS.md') for every session in
+# every workspace.
+$GlobalFiles = @{ 'AGENTS.md' = (Join-Path $env:USERPROFILE '.dsh\AGENTS.md') }
+$RepoGlobal = Join-Path $RepoRoot 'global'
+if (-not (Test-Path -LiteralPath $RepoGlobal)) {
+    New-Item -ItemType Directory -Path $RepoGlobal | Out-Null
+}
+
 Write-Host "live -> repo" -ForegroundColor Cyan
 Write-Host "  from: $LiveProfile"
 Write-Host "  to:   $RepoProfile"
@@ -65,8 +74,26 @@ foreach ($name in $Files) {
     Copy-Item -LiteralPath $src -Destination $dst -Force
 }
 
+foreach ($name in $GlobalFiles.Keys) {
+    $src = $GlobalFiles[$name]
+    $dst = Join-Path $RepoGlobal $name
+
+    if (-not (Test-Path -LiteralPath $src)) {
+        Write-Warning "not present on disk, skipped: $name (global)"
+        continue
+    }
+
+    $srcHash = (Get-FileHash -LiteralPath $src -Algorithm SHA256).Hash
+    $dstHash = if (Test-Path -LiteralPath $dst) {
+        (Get-FileHash -LiteralPath $dst -Algorithm SHA256).Hash
+    } else { $null }
+
+    if ($srcHash -ne $dstHash) { $changed += "$name (global)" }
+    Copy-Item -LiteralPath $src -Destination $dst -Force
+}
+
 if ($changed.Count -eq 0) {
-    Write-Host 'No differences — the repo already matches the live profile.' -ForegroundColor Green
+    Write-Host 'No differences — the repo already matches the live configuration.' -ForegroundColor Green
     return
 }
 

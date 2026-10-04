@@ -24,7 +24,8 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-$RepoProfile = Join-Path $PSScriptRoot '..\profile' | Resolve-Path
+$RepoRoot = Join-Path $PSScriptRoot '..' | Resolve-Path
+$RepoProfile = Join-Path $RepoRoot 'profile'
 $LiveProfile = Join-Path $env:USERPROFILE '.dsh\profiles\desktop'
 
 if (-not (Test-Path -LiteralPath $LiveProfile)) {
@@ -40,6 +41,11 @@ $Files = @(
     'pnpm-workspace.yaml',
     'cordis.yml'
 )
+
+# Tracked outside the profile directory: the user-global instruction file.
+# dsh-agent-instructions reads join($DSH_HOME, 'AGENTS.md'), which applies to
+# every session in every workspace, so it is the highest-leverage file here.
+$GlobalFiles = @{ 'AGENTS.md' = (Join-Path $env:USERPROFILE '.dsh\AGENTS.md') }
 
 Write-Host "repo -> live" -ForegroundColor Cyan
 Write-Host "  from: $RepoProfile"
@@ -74,6 +80,29 @@ foreach ($name in $Files) {
     }
     Copy-Item -LiteralPath $src -Destination $dst -Force
     $changed += $name
+}
+
+# The user-global instruction file, which lives beside the profiles rather than
+# inside one. Same copy-and-hash approach; no backup file is written because a
+# stale copy here would itself be picked up as instructions.
+foreach ($name in $GlobalFiles.Keys) {
+    $src = Join-Path (Join-Path $RepoRoot 'global') $name
+    $dst = $GlobalFiles[$name]
+
+    if (-not (Test-Path -LiteralPath $src)) {
+        Write-Warning "missing in repo, skipped: $name (global)"
+        continue
+    }
+
+    $srcHash = (Get-FileHash -LiteralPath $src -Algorithm SHA256).Hash
+    $dstHash = if (Test-Path -LiteralPath $dst) {
+        (Get-FileHash -LiteralPath $dst -Algorithm SHA256).Hash
+    } else { $null }
+
+    if ($srcHash -eq $dstHash) { $same += "$name (global)"; continue }
+
+    Copy-Item -LiteralPath $src -Destination $dst -Force
+    $changed += "$name (global)"
 }
 
 Write-Host "updated ($($changed.Count)):" -ForegroundColor Green
