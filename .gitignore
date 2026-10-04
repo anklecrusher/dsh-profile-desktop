@@ -1,0 +1,17 @@
+# Applied to the live DSH profile directory. Kept in the repo so a capture can
+# never pull build output or transient state back in.
+node_modules/
+.plugin-manager/
+.dsh-market/discovery-compatibility-v1.json
+.dsh-market/log.ndjson
+
+# DSH and the market create timestamped backups beside the files they rewrite.
+# They are recovery aids, not history — git owns history here.
+*.bak-*
+*.pre-*
+*.sanitized-*
+*.tmp
+
+# Local overrides, if ever introduced
+*.local.yml
+*.local.json

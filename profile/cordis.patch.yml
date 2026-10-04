@@ -1,0 +1,456 @@
+# Your patch layer for this dsh profile, applied after every bundle layer:
+# a top-level YAML array of loader patch entries (id-targeted config
+# overrides, disables, and insert lists; `!!js` expressions allowed).
+- id: agent-default-model
+  name: "@deepseek-ai/dsh-agent-default-model"
+  config:
+    provider: beeapi
+    model: deepseek-v4.1-flash
+    reasoningEffort: max
+- id: ui-settings-account
+  name: "@deepseek-ai/dsh-client-ui-settings-account"
+  config:
+    version: 1
+    step: done
+    purpose: both
+    process: detailed
+    completion: completed
+    usage: detailed
+    developerTools: true
+- id: ui-chat
+  name: "@deepseek-ai/dsh-client-ui-chat"
+  config:
+    transcriptView: standard
+    performanceUsage: detailed
+- id: ui-settings
+  name: "@deepseek-ai/dsh-client-ui-settings"
+  config:
+    enabled: true
+# =============================================================================
+# BEEAPI ROUTE
+# =============================================================================
+# Single route on the OpenAI Responses surface (/v1). On this wire a thinking
+# level travels as the *name* `reasoning.effort`, so every vendor's real
+# vocabulary is offered verbatim and the gateway logs the tier name it received
+# alongside the tokens spent.
+#
+# This route, not /anthropic, because pi-ai's Anthropic transport carries
+# thinking as a token budget with only four slots, and clamps both `xhigh` and
+# `max` onto `high` (pi-ai dist/api/simple-options.js clampReasoning) — which
+# would collapse the top of every ladder into one tier. Responses has no such
+# ceiling.
+#
+# `reasoningEfforts` maps a DSH level (the key, offered by the picker) to the
+# spelling actually sent on the wire (the value). A level left out of the map is
+# not merely hidden — it becomes unsupported for that model, and requesting it
+# fails with UNSUPPORTED_REASONING_EFFORT. Levels a model cannot honour are
+# deliberately absent rather than aliased, so no two tiers mean the same thing.
+- id: llm-pi-ai
+  name: "@deepseek-ai/dsh-llm-pi-ai"
+  config:
+    providers:
+      beeapi:
+        displayName: beeapi
+        apiKeyEnv: BEEAPI_API_KEY
+        api: openai-responses
+        baseURL: https://beeapi.dev/v1
+        defaultMaxTokens: 65536
+        models:
+          # ---- OpenAI GPT-6 ------------------------------------------------
+          # No `none`: gpt-6-astra rejects it with HTTP 400, and 6.1-sol
+          # rejects both `none` and `minimal`. `xhigh` and `max` are both
+          # supported, so this ladder is genuinely five deep.
+          - id: gpt-6-sol
+            name: gpt-6-sol
+            contextWindow: 272000
+            input:
+              - text
+              - image
+            reasoningEfforts:
+              low: low
+              medium: medium
+              high: high
+              xhigh: xhigh
+              max: max
+          - id: gpt-6.1-sol
+            name: gpt-6.1-sol
+            contextWindow: 272000
+            input:
+              - text
+              - image
+            reasoningEfforts:
+              low: low
+              medium: medium
+              high: high
+              xhigh: xhigh
+              max: max
+          - id: gpt-6-astra
+            name: gpt-6-astra
+            contextWindow: 272000
+            input:
+              - text
+              - image
+            reasoningEfforts:
+              low: low
+              medium: medium
+              high: high
+              xhigh: xhigh
+              max: max
+          - id: gpt-6-luna
+            name: gpt-6-luna
+            contextWindow: 272000
+            input:
+              - text
+              - image
+            reasoningEfforts:
+              low: low
+              medium: medium
+              high: high
+              xhigh: xhigh
+              max: max
+          # ---- OpenAI GPT-5.6 ----------------------------------------------
+          # `max` starts at GPT-5.6, and `none` is accepted here.
+          - id: gpt-5.6-sol
+            name: gpt-5.6-sol
+            contextWindow: 272000
+            input:
+              - text
+              - image
+            reasoningEfforts:
+              off: none
+              low: low
+              medium: medium
+              high: high
+              xhigh: xhigh
+              max: max
+          - id: gpt-5.6-terra
+            name: gpt-5.6-terra
+            contextWindow: 272000
+            input:
+              - text
+              - image
+            reasoningEfforts:
+              off: none
+              low: low
+              medium: medium
+              high: high
+              xhigh: xhigh
+              max: max
+          - id: gpt-5.6-luna
+            name: gpt-5.6-luna
+            contextWindow: 272000
+            input:
+              - text
+              - image
+            reasoningEfforts:
+              off: none
+              low: low
+              medium: medium
+              high: high
+              xhigh: xhigh
+              max: max
+          # ---- OpenAI GPT-5.5 ----------------------------------------------
+          # `xhigh` reaches back to GPT-5.4/5.5; `max` begins at GPT-5.6, so it
+          # is not offered here. `none` was verified accepted on this route.
+          - id: gpt-5.5
+            name: gpt-5.5
+            contextWindow: 272000
+            input:
+              - text
+              - image
+            reasoningEfforts:
+              off: none
+              low: low
+              medium: medium
+              high: high
+              xhigh: xhigh
+          - id: codex-auto-review
+            name: codex-auto-review
+            contextWindow: 272000
+            input:
+              - text
+              - image
+            reasoningEfforts:
+              off: none
+              low: low
+              medium: medium
+              high: high
+              xhigh: xhigh
+          # ---- Google Gemini ------------------------------------------------
+          # Gemini's own vocabulary is `thinking_level`: low / medium / high.
+          # `minimal` is not accepted on this route (502), and Gemini 3 cannot
+          # disable thinking at all, so there is no Off tier.
+          - id: gemini-3.8-flash
+            name: gemini-3.8-flash
+            contextWindow: 1000000
+            input:
+              - text
+              - image
+            reasoningEfforts:
+              low: low
+              medium: medium
+              high: high
+          - id: gemini-3.1-pro
+            name: gemini-3.1-pro
+            contextWindow: 1000000
+            input:
+              - text
+              - image
+            reasoningEfforts:
+              low: low
+              medium: medium
+              high: high
+          - id: gemini-3.1-flash-lite
+            name: gemini-3.1-flash-lite
+            contextWindow: 1000000
+            input:
+              - text
+              - image
+            reasoningEfforts:
+              low: low
+              medium: medium
+              high: high
+          # ---- xAI Grok ------------------------------------------------------
+          # Real ladder is low / medium / high / xhigh (`xhigh` from 4.6 up).
+          # Grok cannot disable reasoning, so there is no Off tier.
+          - id: grok-4.7
+            name: grok-4.7
+            contextWindow: 1000000
+            input:
+              - text
+              - image
+            reasoningEfforts:
+              low: low
+              medium: medium
+              high: high
+              xhigh: xhigh
+          - id: grok-4.6
+            name: grok-4.6
+            contextWindow: 1000000
+            input:
+              - text
+              - image
+            reasoningEfforts:
+              low: low
+              medium: medium
+              high: high
+              xhigh: xhigh
+          # ---- DeepSeek V4 ---------------------------------------------------
+          # Three real states: non-think / high / max. `low` and `medium` are
+          # normalised up to `high` upstream, so they are absent rather than
+          # offered as duplicates.
+          - id: deepseek-v4.1-flash
+            name: deepseek-v4.1-flash
+            contextWindow: 1000000
+            input:
+              - text
+              - image
+            reasoningEfforts:
+              off: none
+              high: high
+              max: max
+          - id: deepseek-v4-pro
+            name: deepseek-v4-pro
+            contextWindow: 1000000
+            input:
+              - text
+            reasoningEfforts:
+              off: none
+              high: high
+              max: max
+          - id: deepseek-v4-pro-0813
+            name: deepseek-v4-pro-0813
+            contextWindow: 1000000
+            input:
+              - text
+            reasoningEfforts:
+              off: none
+              high: high
+              max: max
+          # ---- Models this gateway cannot currently serve --------------------
+          # Kept as a record, disabled on purpose. Uncomment only after the
+          # upstream side is fixed, otherwise selecting one fails every request.
+          #
+          # glm-5.3 / glm-5.3-flash: dropped. The gateway fronts GLM through an
+          #   anthropic/messages upstream, so on this Responses route the harness
+          #   replays each assistant turn's thinking block as a stateful
+          #   `input[].reasoning` item (pi-ai dist/api/openai-responses-shared.js
+          #   :179), which the gateway cannot convert: turn 2 dies with HTTP 422
+          #   `cross_protocol_not_supported`. Verified live on both models. They
+          #   worked on the /anthropic surface, but that wire carries thinking as
+          #   a four-slot token budget and clamps `xhigh`/`max` onto `high`, so it
+          #   cannot express GLM's own low / high / max ladder without duplicates.
+          #   Restore them on a second `anthropic-messages` provider if needed.
+          #
+          # gemini-3.1-pro / gemini-3.8-flash: HTTP 502 on BOTH surfaces
+          #   (/v1/responses and /anthropic/v1/messages), so this is a gateway-side
+          #   upstream outage, not a protocol or config problem. The sibling
+          #   gemini-3.1-flash-lite answers on both.
+          # nano-banana-2 / -2k / -4k: 502 on /responses, /chat/completions and
+          #   /images/generations alike.
+          # gpt-image-2 / gpt-image-2.5: live on /images/generations, but
+          #   /responses refuses them with 403 "Image generation is not enabled for
+          #   this API key route pool", and DSH has no image-generation surface.
+          # deepseek-v4-flash: 502 from the gateway edge.
+          # gemini-3.5-flash: answers 200 only to say it is no longer available.
+          #
+          # - id: glm-5.3
+          #   name: glm-5.3
+          #   contextWindow: 1000000
+          #   input:
+          #     - text
+          #     - image
+          #   reasoningEfforts: false
+          # - id: glm-5.3-flash
+          #   name: glm-5.3-flash
+          #   contextWindow: 1000000
+          #   input:
+          #     - text
+          #     - image
+          #   reasoningEfforts: false
+          # - id: nano-banana-2
+          #   name: nano-banana-2
+          #   contextWindow: 272000
+          #   input:
+          #     - text
+          #     - image
+          #   reasoningEfforts: false
+          # - id: nano-banana-2-2k
+          #   name: nano-banana-2-2k
+          #   contextWindow: 272000
+          #   input:
+          #     - text
+          #     - image
+          #   reasoningEfforts: false
+          # - id: nano-banana-2-4k
+          #   name: nano-banana-2-4k
+          #   contextWindow: 1000000
+          #   input:
+          #     - text
+          #     - image
+          #   reasoningEfforts: false
+          # - id: gpt-image-2
+          #   name: gpt-image-2
+          #   contextWindow: 272000
+          #   input:
+          #     - text
+          #     - image
+          #   reasoningEfforts: false
+          # - id: gpt-image-2.5
+          #   name: gpt-image-2.5
+          #   contextWindow: 272000
+          #   input:
+          #     - text
+          #     - image
+          #   reasoningEfforts: false
+          # - id: deepseek-v4-flash
+          #   name: deepseek-v4-flash
+          #   contextWindow: 1000000
+          #   input:
+          #     - text
+          #   reasoningEfforts: false
+          # - id: gemini-3.5-flash
+          #   name: gemini-3.5-flash
+          #   contextWindow: 1000000
+          #   input:
+          #     - text
+          #     - image
+          #   reasoningEfforts: false
+- id: session-log-deepseek
+  name: "@deepseek-ai/dsh-session-log-deepseek"
+  config:
+    enabled: false
+- id: subagent-model-selection-settings
+  name: "@deepseek-ai/dsh-tool-subagent/model-selection-settings"
+  config:
+    enabled: true
+    allowedModels:
+      - provider: beeapi
+        model: gpt-6-sol
+      - provider: beeapi
+        model: gemini-3.8-flash
+      - provider: beeapi
+        model: grok-4.7
+      - provider: beeapi
+        model: grok-4.6
+      - provider: beeapi
+        model: deepseek-v4.1-flash
+- id: permission
+  name: "@deepseek-ai/dsh-permission-presets"
+  config:
+    presets:
+      read-only:
+        sandbox: read-only
+        approval: ask
+      workspace-write:
+        sandbox: workspace-write
+        approval: ask
+      danger-full-access:
+        sandbox: danger-full-access
+        approval: never
+    defaultPreset: danger-full-access
+- id: agent-preset-registry
+  name: "@deepseek-ai/dsh-agent-preset-registry"
+  config:
+    default: standard
+    selectedDefault: cordis
+- id: web-search-deepseek
+  disabled: true
+- id: tool-bash
+  disabled: true
+- id: gitbash-tool
+  disabled: false
+
+# =============================================================================
+# TAVILY VIA dsh-mcp-lazy (migrated 2026-10-04)
+# =============================================================================
+# Tavily used to reach the model through @deepseek-ai/dsh-mcp-client (the
+# @local/tavily-mcp bundle), which registers every one of its five tools as a
+# real native tool. Those schemas enter EVERY request whether or not a search
+# happens. Measured against the live server (tavily-mcp 4.0.4, 2026-10-04):
+#
+#   tavily_search    3119 B   tavily_crawl     2081 B   tavily_research   816 B
+#   tavily_extract    937 B   tavily_map       1394 B
+#   ---------------------------------------------------------------
+#   total            8347 B  ~= 2087 tokens on every single request
+#
+# dsh-mcp-lazy keeps ONE fixed tool (`mcp`, ~1525 B ~= 381 tokens) in front of
+# them and connects Tavily on first use, so the saving is ~1706 tokens/request.
+# Tool names behind the gateway are `tavily__<name>`, e.g. tavily__tavily_search.
+#
+# The old row is disabled rather than deleted: the @local/tavily-mcp bundle
+# still ships it, and both plugins serving the same servers is a configuration
+# mistake the gateway reports on every status call.
+#
+# Two fields from the mcp-client row do not survive the move, by design:
+#   - failOnStartupError: mcp-lazy refuses the name. A lazy server reports its
+#     failure on the first call that needs it; use lifecycle: eager instead if
+#     startup must fail loudly. Tavily is a remote HTTP service, so a connect is
+#     cheap and lazy is the right trade.
+#   - reconnect: mcp-lazy has no reconnect timer; a dropped server is restarted
+#     by the next call that needs it.
+# toolCallTimeoutMs IS carried over: tavily_research is a deep-research call and
+# legitimately outruns the 60 s package default.
+#
+# The credential still comes from $DSH_HOME/.env (loaded into process.env at
+# boot), so a value saved through the credentials UI would still be invisible
+# here. Restart after editing .env: that snapshot is frozen at launch.
+#
+# RE-ADDED 2026-10-04 21:15: disabling the @local/tavily-mcp bundle in the
+# dsh-market UI deletes this override. Its toggle reports "enabled row
+# tavily-mcp in cordis.patch.yml", which strips the disable and leaves BOTH
+# paths live — the gateway then warns that tavily is served twice and the
+# token saving is lost. If that happens again, put this row back and restart.
+- id: tavily-mcp
+  disabled: true
+- id: mcp-lazy
+  name: 'dsh-mcp-lazy'
+  config:
+    idleTimeout: 10
+    servers:
+      - serverName: tavily
+        transport: streamable-http
+        url: https://mcp.tavily.com/mcp/
+        headers:
+          Authorization: !!js '`Bearer ${process.env.TAVILY_API_KEY}`'
+        toolCallTimeoutMs: 180000
