@@ -189,6 +189,14 @@ override earlier ones.
 | 7 | `dsh-mcp-lazy` | npm | 0.4.1 | Lazy MCP gateway — the only path that should serve Tavily. |
 | 8 | `dshmarket` | npm | 1.66.8 | In-GUI plugin market. Writes to `cordis.patch.yml`. |
 | 9 | `dsh-mnemon` | npm | 0.5.23 | Layered cross-session memory. 17 sub-components. See below. |
+| 10 | `dsh-better-sidebar` | npm | 0.24.1 | Right-sidebar workbench: file tree, editor, terminal, Git, side chat, subagent view. Requires DSH ≥ 0.2.0-rc.1. |
+
+`dsh-better-sidebar` registers its tabs into **DSH's own right sidebar** (since
+its v0.19.0) rather than drawing a panel of its own, so it augments the shipped
+UI instead of replacing it. Its `cordis.patch.yml` carries a `!!js` guard that
+disables its row when another enabled bundle already mounts the same package —
+relevant only if an aggregate bundle is ever added, and that bundle would have
+to come *before* this one in `dsh.profile.bundles` for the guard to see it.
 
 Layers 3 and 4 resolve by absolute path (`link:E:\...`), so this file set only
 works on this machine as-is.

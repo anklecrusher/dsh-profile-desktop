@@ -5,6 +5,7 @@
     "@local/dsh-gitbash-tool": "link:E:/GitHubWorkspace/own/opensource/dsh-gitbash-tool",
     "@local/tavily-mcp": "link:E:/GitHubWorkspace/own/opensource/tavily-mcp-bundle",
     "dsh-at-file": "^0.6.3",
+    "dsh-better-sidebar": "^0.24.1",
     "dsh-mcp-lazy": "0.4.1",
     "dsh-mnemon": "^0.5.23",
     "dsh-notify-me": "github:chromoany/dsh-notify-me#8f836ad1aeade0c6092561f66e7bf8d73d5cd2f1",
@@ -21,7 +22,8 @@
         "dsh-at-file",
         "dsh-mcp-lazy",
         "dshmarket",
-        "dsh-mnemon"
+        "dsh-mnemon",
+        "dsh-better-sidebar"
       ]
     }
   }
