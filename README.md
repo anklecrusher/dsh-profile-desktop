@@ -33,12 +33,15 @@ only warning you get that the market rewrote something.
 `cordis.patch.yml` is hot-reloaded (a patch edit took effect without a restart
 on 2026-10-04), but bundle membership in `package.json` is not.
 
-## Why copies and not links
+## Why the profile files are copied, not linked
+
+This applies **only** to the five config files in `profile/`. Plugin code is
+linked — see [Self-authored plugins](#self-authored-plugins).
 
 Skill entrypoints under `.codex\skills` use junctions, per
-`_workspace\link-map.md`. **Do not do that for these files.** DSH writes config
-through `@deepseek-ai/dsh-atomic-write`, which writes a temp sibling and renames
-it over the target. Its own source documents the consequence:
+`_workspace\link-map.md`. **Do not do that for these config files.** DSH writes
+them through `@deepseek-ai/dsh-atomic-write`, which writes a temp sibling and
+renames it over the target. Its own source documents the consequence:
 
 > The rename also replaces a symlinked target itself instead of writing through
 > to its referent.
@@ -50,9 +53,125 @@ Measured on this machine (Node 24.21.0, DSH 0.2.0-rc.2):
 | Hard link (`mklink /H`) | **Link silently severed.** The profile gets a fresh file; the E: source keeps the old bytes; link count drops to 1. |
 | Directory junction (`mklink /J`) | Passes through correctly — the write lands in the source directory. |
 
-So a hardlink would desynchronise on the first market toggle and you would not
-notice. Junction-per-directory works, but the whole profile directory would then
-live inside the repo including `node_modules`, so this repo uses copies.
+A hardlink would desynchronise on the first market toggle and you would not
+notice. A junction does work, but then the whole profile directory — including
+`node_modules` — would live inside the repo. Copies keep the tracked set at five
+files and make drift detectable by hash.
+
+The distinction that matters: **DSH only rewrites files it owns**
+(`package.json`, `cordis.patch.yml`). It never writes into a bundle's source
+directory, so linking a *plugin's* directory is safe.
+
+## Self-authored plugins
+
+A plugin you write yourself is **not** stored in this repository's `profile/`
+directory. It gets its own repository under
+`E:\GitHubWorkspace\own\opensource\<plugin-name>\`, and this repository only
+records that the profile depends on it, by absolute path:
+
+```jsonc
+// profile/package.json
+"dependencies": {
+  "@local/my-plugin": "link:E:/GitHubWorkspace/own/opensource/my-plugin"
+},
+"dsh": { "profile": { "bundles": [ /* ... */ "@local/my-plugin" ] } }
+```
+
+pnpm turns that `link:` into a directory symlink inside the profile's
+`node_modules`:
+
+```
+C:\...\.dsh\profiles\desktop\node_modules\@local\my-plugin
+        -> E:\GitHubWorkspace\own\opensource\my-plugin
+```
+
+This works. Both existing `@local/*` bundles are exactly this shape, and the
+source on `E:` is the only copy — verified 2026-10-04.
+
+### Why this is safe here, when the profile files are not
+
+The reason config files must be copied and never linked (above) does not apply
+to a plugin's **own** files. `writeFileAtomic` only ever rewrites
+`package.json` and `cordis.patch.yml` — the files DSH owns. It never writes into
+a bundle's source directory, so a symlink to `E:` is never renamed over. What
+DSH does with a bundle directory is resolve and read it, and
+`packageDirFromAnchor` uses `createRequire(...).resolve.paths(...)`, which
+follows symlinks normally.
+
+Rule of thumb:
+
+| Path | Strategy |
+| --- | --- |
+| `profiles/desktop/package.json`, `cordis.patch.yml` | **copy** — DSH rewrites these |
+| `node_modules/@local/<your-plugin>` | **symlink** — DSH only reads it |
+
+### Anatomy of a self-authored plugin
+
+`dsh-gitbash-tool` is the reference implementation; copy its shape.
+
+```
+my-plugin/
+├── package.json          # name, and dsh.bundle.patch pointing at the patch file
+├── cordis.patch.yml      # what rows to insert into the profile
+├── entry.js              # cache-busting entry (see below)
+├── index.js              # the actual implementation
+├── test-harness.mjs      # offline test harness
+└── README.md
+```
+
+Minimum `package.json`:
+
+```json
+{
+  "name": "@local/my-plugin",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./entry.js",
+  "exports": { ".": "./entry.js" },
+  "dsh": { "bundle": { "patch": "./cordis.patch.yml" } }
+}
+```
+
+Minimum `cordis.patch.yml`:
+
+```yaml
+- insert:
+    - id: my-plugin
+      name: '@local/my-plugin'
+```
+
+### The cache-busting entry point
+
+Node caches ES modules by resolved URL for the whole process lifetime. Cordis
+re-runs a plugin's `apply` on reload but cannot force a re-import, so editing
+`index.js` has no effect until the app restarts. `dsh-gitbash-tool/entry.js`
+works around this by importing the implementation through a unique
+`?t=<timestamp>` URL on each activation. Reuse that file's approach.
+
+### Registering a new self-authored plugin
+
+```powershell
+# 1. create and commit the plugin repo
+cd E:\GitHubWorkspace\own\opensource
+mkdir my-plugin; cd my-plugin
+# ... author package.json, cordis.patch.yml, index.js, entry.js ...
+git init; git add -A; git commit -m "Add my-plugin"
+
+# 2. add it to the profile (desktop is reserved — use the app's own CLI)
+& "D:\Users\ankle crusher\AppData\Local\Programs\DeepSeek Harness\resources\runtime\cli\bin\dsh.cmd" `
+    plugin --profile desktop add "@local/my-plugin@link:E:/GitHubWorkspace/own/opensource/my-plugin"
+
+# 3. record it here
+& .\scripts\capture.ps1
+git diff                # expect: package.json (dependency + bundle row) and pnpm-lock.yaml
+git add -A; git commit -m "Add my-plugin to the desktop profile"
+
+# 4. restart the desktop app
+```
+
+Editing the plugin afterwards needs no profile changes — the symlink means the
+profile already sees your edits. Toggle the plugin row (or restart) to reload.
 
 ## Installed bundles
 
@@ -69,10 +188,77 @@ override earlier ones.
 | 6 | `dsh-at-file` | npm | 0.6.3 | Codex-style `@file` mentions in the composer. |
 | 7 | `dsh-mcp-lazy` | npm | 0.4.1 | Lazy MCP gateway — the only path that should serve Tavily. |
 | 8 | `dshmarket` | npm | 1.66.8 | In-GUI plugin market. Writes to `cordis.patch.yml`. |
-| 9 | `dsh-mnemon` | npm | 0.5.23 | Layered cross-session memory. 17 sub-components. |
+| 9 | `dsh-mnemon` | npm | 0.5.23 | Layered cross-session memory. 17 sub-components. See below. |
 
 Layers 3 and 4 resolve by absolute path (`link:E:\...`), so this file set only
 works on this machine as-is.
+
+## dsh-mnemon and its CLI
+
+`dsh-mnemon` works in three layers. Only the third needs the `mnemon` CLI.
+
+| Layer | Stored at | Needs CLI |
+| --- | --- | --- |
+| Runtime Memory (`USER.md` / `MEMORY.md`) | `~\.mnemon\runtime\` | no |
+| Project Documents | `~\.mnemon\documents\` | no |
+| Memory Spaces (graph, long-term) | `~\.mnemon\data\` | **yes** |
+
+Storage root is `~\.mnemon` (the `global` default). It does not touch the
+workspace, so it never collides with a project's own notes.
+
+### mnemon CLI
+
+Installed 2026-10-04 at
+`C:\Users\ankle crusher\AppData\Local\Programs\mnemon\mnemon.exe` (v0.2.10,
+Apache-2.0, a 13.8 MB Go binary — no Node runtime needed).
+
+That directory is deliberate: `findMnemonCommand` in
+`dsh-mnemon-source-memory-spaces/native-cli.js` searches, in order,
+
+1. the `cliPath` setting,
+2. `$MNEMON_CLI_PATH`,
+3. `PATH` for `mnemon.exe` / `mnemon.cmd`,
+4. `%GOBIN%\mnemon.exe`, `%GOPATH%\bin\mnemon.exe`,
+   **`%LOCALAPPDATA%\Programs\mnemon\mnemon.exe`**, `%ProgramFiles%\mnemon\mnemon.exe`.
+
+Option 4 is why no `PATH` edit was needed. Verify with:
+
+```powershell
+node --input-type=module -e "import {findMnemonCommand} from 'dsh-mnemon-source-memory-spaces/native-cli'; console.log(findMnemonCommand({}))"
+```
+
+To upgrade, replace that `mnemon.exe` — or install the npm wrapper
+(`npm i -g @mnemon-dev/mnemon`) and let discovery find it on `PATH` instead.
+
+### Idle checkpoint review — the token cost
+
+`dsh-mnemon` runs a background maintenance subagent after a turn completes and
+the session goes idle. Defaults, from `DEFAULT_IDLE_REVIEW` in
+`dsh-mnemon/lib/index.js`:
+
+| Setting | Default | Meaning |
+| --- | --- | --- |
+| `idleReviewMs` | `30000` | idle time before the review fires |
+| `idleReview.enabled` | `true` | on by default |
+| `idleReview.minIntervalMs` | `300000` | ≥5 min between reviews |
+| `idleReview.maxPerSession` | `20` | cap per session |
+| `idleReview.maxContextChars` | `24000` | inherited checkpoint size cap |
+| `idleReview.maxTokens` | `4096` | output budget for the reviewer |
+| `idleReview.provider` | `spawn` | child agent type (`fork` costs far more) |
+
+Observed cost on this machine with `deepseek-v4.1-flash`: three consecutive
+reviews reported **16.7 K / 86.2 K / 72.3 K** input tokens. The 86 K case is a
+full inherited context; the reviewer's own output is capped at 4 K.
+
+To cut the cost, in order of effect:
+
+1. `idleReview.enabled: false` — stops it entirely; memory still works via the
+   manual **Save to memory** button and agent-called tools.
+2. Raise `minIntervalMs` (e.g. `1800000` for 30 min) and lower
+   `maxPerSession`.
+3. Lower `maxContextChars` — less inherited context, cheaper and blunter.
+
+Set these under the `mnemon` row's config in `profile/cordis.patch.yml`.
 
 ## Tavily: read this before touching it
 
