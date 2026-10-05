@@ -480,3 +480,7 @@
     idleReviewMs: 30000
     storageScope: custom
     dataDir: D:\Users\ankle crusher\Documents\.mnemon
+- id: better-sidebar
+  name: dsh-better-sidebar
+  config:
+    agentOpenTools: true

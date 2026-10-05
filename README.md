@@ -190,6 +190,26 @@ override earlier ones.
 | 8 | `dshmarket` | npm | 1.66.8 | In-GUI plugin market. Writes to `cordis.patch.yml`. |
 | 9 | `dsh-mnemon` | npm | 0.5.23 | Layered cross-session memory. 17 sub-components. See below. |
 | 10 | `dsh-better-sidebar` | npm | 0.24.1 | Right-sidebar workbench: file tree, editor, terminal, Git, side chat, subagent view. Requires DSH ≥ 0.2.0-rc.1. |
+| 11 | `dsh-chat-import` | npm | 0.24.0 | Import external agent transcripts as resumable DSH sessions. Mount row id is `import-claude`. |
+
+`dsh-chat-import` is the one to reach for when a conversation started in Codex,
+Claude Code, Cursor, Gemini, opencode and about a dozen others should continue
+inside DSH. Notable behaviour, all verified against its own docs:
+
+- Imported sessions **follow the source project folder**. The host only accepts a
+  session whose `cwd` equals a workspace path, so the plugin resolves the landing
+  spot before creating anything: a `cwd` matching an existing workspace reuses it,
+  a local `cwd` gets a new workspace created for it (a new sidebar group appears),
+  and an unreachable `cwd` falls back to a dedicated import workspace. The
+  `workspaceMode` setting picks between `auto` (default), `per-project` and
+  `dedicated`. `/attach-workspaces` re-homes sessions that landed ungrouped.
+- Codex context compaction is imported as DSH's **native compaction checkpoint**,
+  so the model's view matches what Codex itself saw after compacting.
+- `preview: true` is a genuine read-only dry run — it parses and counts without
+  writing anything, which is how the import size is measured before committing.
+- Re-importing is idempotent: unchanged sources are skipped, grown sources append
+  only the new turns, and a source you already continued inside DSH becomes a new
+  copy rather than being merged into your own conversation.
 
 `dsh-better-sidebar` registers its tabs into **DSH's own right sidebar** (since
 its v0.19.0) rather than drawing a panel of its own, so it augments the shipped

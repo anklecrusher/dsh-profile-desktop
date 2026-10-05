@@ -20,6 +20,9 @@ importers:
       dsh-better-sidebar:
         specifier: ^0.24.1
         version: 0.24.1
+      dsh-chat-import:
+        specifier: ^0.24.0
+        version: 0.24.0(@deepseek-ai/schemastery@3.18.4)
       dsh-mcp-lazy:
         specifier: 0.4.1
         version: 0.4.1(@deepseek-ai/schemastery@3.18.4)(zod@4.6.5)
@@ -602,6 +605,18 @@ packages:
       '@huanlin/dsh-plugin-better-locale':
         optional: true
 
+  dsh-chat-import@0.24.0:
+    resolution: {integrity: sha512-oDh8Ull13XKsSTRSY/Ddn72Zaoetafb1Vv9xosPe7QE5aBzCgCjeH3KUY5i25C8s+4O63EK9wglZGUt5KZ1z+A==}
+    engines: {node: '>=22.13'}
+    hasBin: true
+    peerDependencies:
+      '@deepseek-ai/cordis': ^4.0.1
+      '@deepseek-ai/dsh': '>=0.1.5-rc.1'
+      '@deepseek-ai/dsh-client-locale': '>=0.1.0-rc.6'
+      '@deepseek-ai/dsh-tools': '>=0.1.0-rc.6 <0.3.0'
+      '@deepseek-ai/schemastery': '>=3.0.0'
+      react: '>=18.0.0'
+
   dsh-mcp-lazy@0.4.1:
     resolution: {integrity: sha512-YMyxrplOkillNGL19unE3olGkXR0lxV+Fy8J34TY6Yb7EDVGVq4k+BizU2UgTxeD6Sn2Mim8oFTTLsX9njr8UQ==}
     engines: {node: '>=22.18.0'}
@@ -859,6 +874,9 @@ packages:
 
   function-bind@1.1.2:
     resolution: {integrity: sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==}
+
+  fzstd@0.1.1:
+    resolution: {integrity: sha512-dkuVSOKKwh3eas5VkJy1AW1vFpet8TA/fGmVA5krThl8YcOVE/8ZIoEA1+U1vEn5ckxxhLirSdY837azmbaNHA==}
 
   get-intrinsic@1.3.0:
     resolution: {integrity: sha512-9fSjSaos/fRIVIp+xSJlE6lfwhES7LNtKaCBIamHsjr2na1BiABJPo0mOjjz8GJDURarmCPGqaiVg5mfjb98CQ==}
@@ -1968,6 +1986,11 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
+  dsh-chat-import@0.24.0(@deepseek-ai/schemastery@3.18.4):
+    dependencies:
+      '@deepseek-ai/schemastery': 3.18.4
+      fzstd: 0.1.1
+
   dsh-mcp-lazy@0.4.1(@deepseek-ai/schemastery@3.18.4)(zod@4.6.5):
     dependencies:
       '@deepseek-ai/schemastery': 3.18.4
@@ -2181,6 +2204,8 @@ snapshots:
   fresh@2.0.0: {}
 
   function-bind@1.1.2: {}
+
+  fzstd@0.1.1: {}
 
   get-intrinsic@1.3.0:
     dependencies:
