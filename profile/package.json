@@ -7,6 +7,7 @@
     "dsh-at-file": "^0.6.3",
     "dsh-better-sidebar": "^0.24.1",
     "dsh-chat-import": "^0.24.0",
+    "dsh-image-gen": "0.8.5",
     "dsh-mcp-lazy": "0.4.1",
     "dsh-mnemon": "^0.5.23",
     "dsh-notify-me": "github:chromoany/dsh-notify-me#8f836ad1aeade0c6092561f66e7bf8d73d5cd2f1",
@@ -25,7 +26,8 @@
         "dshmarket",
         "dsh-mnemon",
         "dsh-better-sidebar",
-        "dsh-chat-import"
+        "dsh-chat-import",
+        "dsh-image-gen"
       ]
     }
   }

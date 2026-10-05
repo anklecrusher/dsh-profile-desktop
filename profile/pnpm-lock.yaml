@@ -23,6 +23,9 @@ importers:
       dsh-chat-import:
         specifier: ^0.24.0
         version: 0.24.0(@deepseek-ai/schemastery@3.18.4)
+      dsh-image-gen:
+        specifier: 0.8.5
+        version: 0.8.5(@deepseek-ai/schemastery@3.18.4)
       dsh-mcp-lazy:
         specifier: 0.4.1
         version: 0.4.1(@deepseek-ai/schemastery@3.18.4)(zod@4.6.5)
@@ -616,6 +619,21 @@ packages:
       '@deepseek-ai/dsh-tools': '>=0.1.0-rc.6 <0.3.0'
       '@deepseek-ai/schemastery': '>=3.0.0'
       react: '>=18.0.0'
+
+  dsh-image-gen@0.8.5:
+    resolution: {integrity: sha512-EptW2XRvDUUAjBR9SQHKX1CKYidvyoE3Yb00wa1TDWcI/O4olIJQfSQ6yYyr9ULcZ5Jzqyryc0CaWEjIe3a9fA==}
+    engines: {node: ^22.19.0 || >=24.0.0}
+    peerDependencies:
+      '@deepseek-ai/cordis': '>=4.0.0 <5'
+      '@deepseek-ai/schemastery': '>=3.18.0 <4'
+      react: '>=18.2.0 <19'
+    peerDependenciesMeta:
+      '@deepseek-ai/cordis':
+        optional: true
+      '@deepseek-ai/schemastery':
+        optional: true
+      react:
+        optional: true
 
   dsh-mcp-lazy@0.4.1:
     resolution: {integrity: sha512-YMyxrplOkillNGL19unE3olGkXR0lxV+Fy8J34TY6Yb7EDVGVq4k+BizU2UgTxeD6Sn2Mim8oFTTLsX9njr8UQ==}
@@ -1990,6 +2008,10 @@ snapshots:
     dependencies:
       '@deepseek-ai/schemastery': 3.18.4
       fzstd: 0.1.1
+
+  dsh-image-gen@0.8.5(@deepseek-ai/schemastery@3.18.4):
+    optionalDependencies:
+      '@deepseek-ai/schemastery': 3.18.4
 
   dsh-mcp-lazy@0.4.1(@deepseek-ai/schemastery@3.18.4)(zod@4.6.5):
     dependencies:

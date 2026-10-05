@@ -191,6 +191,7 @@ override earlier ones.
 | 9 | `dsh-mnemon` | npm | 0.5.23 | Layered cross-session memory. 17 sub-components. See below. |
 | 10 | `dsh-better-sidebar` | npm | 0.24.1 | Right-sidebar workbench: file tree, editor, terminal, Git, side chat, subagent view. Requires DSH ≥ 0.2.0-rc.1. |
 | 11 | `dsh-chat-import` | npm | 0.24.0 | Import external agent transcripts as resumable DSH sessions. Mount row id is `import-claude`. |
+| 12 | `dsh-image-gen` | npm | 0.8.5 | Image studio: generate, edit, compare. Mount row id is `image-gen`. |
 
 `dsh-chat-import` is the one to reach for when a conversation started in Codex,
 Claude Code, Cursor, Gemini, opencode and about a dozen others should continue
@@ -211,6 +212,26 @@ inside DSH. Notable behaviour, all verified against its own docs:
   only the new turns, and a source you already continued inside DSH becomes a new
   copy rather than being merged into your own conversation.
 
+`dsh-image-gen` fills a gap this profile had already documented. The BeeAPI route
+comments in `profile/cordis.patch.yml` record that `gpt-image-2` / `gpt-image-2.5`
+answer on `/images/generations` but are refused on `/responses`, with the note
+"DSH has no image-generation surface" — so the models were reachable but nothing
+in the host could call them. This plugin is that surface.
+
+Configure it under **Settings → Plugins → Image generation**. For this machine the
+provider to pick is **OpenAI Compatible**, with base URL `https://beeapi.dev/v1`
+and model `gpt-image-2`; the existing `BEEAPI_API_KEY` is already in DSH's
+credentials service, which is where this plugin stores keys too. "Test connection"
+then "Fetch models" confirms what the gateway actually exposes.
+
+Two things worth knowing before installing it: the npm tarball is 25.8 MB
+unpacked (`lib/client.js` alone is 4.9 MB — it bundles a tldraw canvas and the
+500+ prompt case library), and its `package.json` declares
+`"prepare": "pnpm run build"`. A **registry** install never runs `prepare` and the
+tarball already ships built `lib/`, but the README's `git+https://` alternative
+would trigger a build that cannot succeed, because `lib/` is gitignored upstream.
+Install from npm.
+
 `dsh-better-sidebar` registers its tabs into **DSH's own right sidebar** (since
 its v0.19.0) rather than drawing a panel of its own, so it augments the shipped
 UI instead of replacing it. Its `cordis.patch.yml` carries a `!!js` guard that
@@ -227,12 +248,30 @@ works on this machine as-is.
 
 | Layer | Stored at | Needs CLI |
 | --- | --- | --- |
-| Runtime Memory (`USER.md` / `MEMORY.md`) | `~\.mnemon\runtime\` | no |
-| Project Documents | `~\.mnemon\documents\` | no |
-| Memory Spaces (graph, long-term) | `~\.mnemon\data\` | **yes** |
+| Runtime Memory (`USER.md` / `MEMORY.md`) | `<root>\runtime\` | no |
+| Project Documents | `<root>\documents\` | no |
+| Memory Spaces (graph, long-term) | `<root>\data\` | **yes** |
 
-Storage root is `~\.mnemon` (the `global` default). It does not touch the
-workspace, so it never collides with a project's own notes.
+The storage root is set to `D:\Users\ankle crusher\Documents\.mnemon` via
+`storageScope: custom` plus `dataDir`, not the `~\.mnemon` default — see
+[docs-mnemon-storage.md](docs-mnemon-storage.md) for the relocation and its
+merge. Either way it sits outside every workspace, so it never collides with a
+project's own notes.
+
+### Enabled strategies
+
+Three of the eight shipped strategies are switched on, as additive enhancements
+on top of the main `default-three-tier` strategy (they do not replace it):
+
+| Strategy | What it adds |
+| --- | --- |
+| `mnemon-strategy-auto-capture` | In-turn guidance to record durable memory; no background tasks, no new write authority |
+| `mnemon-strategy-light-context` | A shared projection budget cap across all Mnemon sources |
+| `mnemon-strategy-scoped` | Source selection and write narrowing |
+
+They were enabled through the GUI, which writes plain `- id: <name> / disabled:
+false` rows at the end of `profile/cordis.patch.yml`. That is the plugin's own
+settings surface doing its job, not an outside rewrite.
 
 ### mnemon CLI
 
