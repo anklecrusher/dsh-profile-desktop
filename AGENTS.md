@@ -40,6 +40,11 @@ the live configuration — DSH reads
    `@local/tavily-mcp` resolve by absolute path. Cloning this repo elsewhere
    needs those paths to exist, or those two bundles edited out.
 
+6. **For cross-computer migration, read [CROSS-PC-SYNC.md](CROSS-PC-SYNC.md)
+   first.** It covers the profile, self-authored Bash tool, MCP configuration,
+   plugin source repositories, machine-specific paths and secrets. Never
+   commit or push migration changes unless the user explicitly asks.
+
 ## When DSH changes something
 
 ```powershell
