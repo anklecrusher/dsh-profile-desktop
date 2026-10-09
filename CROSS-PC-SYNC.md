@@ -12,7 +12,9 @@ The profile mirror is a template, not the live profile. The live profile is
 - Global agent instructions: `global/AGENTS.md`. Review machine-specific paths
   before applying it on another computer.
 - Self-authored source repositories, transferred separately from this mirror:
-  `dsh-gitbash-tool` and `tavily-mcp-bundle`.
+  `dsh-gitbash-tool` and `tavily-mcp-bundle`. The current public remotes are
+  `https://github.com/anklecrusher/dsh-gitbash-tool.git` and
+  `https://github.com/anklecrusher/tavily-mcp-bundle.git`.
 - Registry and Git-hosted plugin dependencies are described by
   `package.json` and locked by `pnpm-lock.yaml`; install them again on the target.
 
@@ -69,8 +71,17 @@ The profile mirror is a template, not the live profile. The live profile is
    those to the user and agree how to transfer them; do not push on the user's
    behalf without authorization.
 5. Transfer the profile mirror and both plugin source repositories using the
-   user's approved private Git remote or another secure method. Do not include
-   `.env`, credentials, `node_modules`, caches, or runtime directories.
+   user's approved Git remote or another secure method. For the current public
+   repositories, a target agent can clone:
+
+   ```text
+   https://github.com/anklecrusher/dsh-profile-desktop.git
+   https://github.com/anklecrusher/dsh-gitbash-tool.git
+   https://github.com/anklecrusher/tavily-mcp-bundle.git
+   ```
+
+   Do not include `.env`, credentials, `node_modules`, caches, or runtime
+   directories.
 
 ## Target Computer
 
