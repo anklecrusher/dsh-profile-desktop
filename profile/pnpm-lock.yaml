@@ -8,12 +8,21 @@ importers:
 
   .:
     dependencies:
+      '@local/dsh-beeapi-replay-compat':
+        specifier: link:E:/GitHubWorkspace/own/opensource/dsh-beeapi-replay-compat
+        version: link:E:/GitHubWorkspace/own/opensource/dsh-beeapi-replay-compat
       '@local/dsh-gitbash-tool':
         specifier: link:E:/GitHubWorkspace/own/opensource/dsh-gitbash-tool
         version: link:E:/GitHubWorkspace/own/opensource/dsh-gitbash-tool
+      '@local/dsh-mole-tool':
+        specifier: link:E:/GitHubWorkspace/own/opensource/dsh-mole-tool
+        version: link:E:/GitHubWorkspace/own/opensource/dsh-mole-tool
       '@local/tavily-mcp':
         specifier: link:E:/GitHubWorkspace/own/opensource/tavily-mcp-bundle
         version: link:E:/GitHubWorkspace/own/opensource/tavily-mcp-bundle
+      '@local/windows-mcp':
+        specifier: link:E:/GitHubWorkspace/own/opensource/windows-mcp-bundle
+        version: link:E:/GitHubWorkspace/own/opensource/windows-mcp-bundle
       dsh-at-file:
         specifier: ^0.6.3
         version: 0.6.3

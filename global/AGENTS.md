@@ -22,6 +22,43 @@ in that project's own `AGENTS.md`.
 - **Do not commit or push without asking.** Local edits and local commits are
   fine when asked. Pushing to a remote is not.
 
+## Scratch files and cleanup
+
+**Leave no intermediate artifacts behind.** A finished task should add only what
+the user asked for — not a trail of probe scripts, dumps, extracted trees and
+scratch directories. The user has said plainly that leftovers after every task
+are not acceptable, so treat cleanup as part of the task, not an optional extra.
+
+**Confine scratch work to one directory per task**, created under the system
+temp:
+
+```bash
+SCRATCH="${TMPDIR:-/tmp}/dsh-<topic>"; mkdir -p "$SCRATCH"
+```
+
+Put asar extracts, schema dumps, probe scripts, downloaded fixtures, throwaway
+profiles, test venvs and every other by-product there. Do **not** scatter them
+across the workspace, a project root, `$DSH_HOME`, or the profile directory —
+those are the places the user has to look at afterwards, and they are where the
+mess has actually accumulated. On this machine Git Bash maps `/tmp` to
+`%TEMP%`, so both spellings reach the same place.
+
+**Remove the scratch directory before reporting the task done**, and clean up as
+you go rather than only at the end: a temp profile, a spawned server, a test venv
+or an extracted tree should go as soon as the step needing it has finished, so a
+long task does not accumulate.
+
+**Never delete these** — they are deliverables or load-bearing, not scratch:
+
+- the artifact the user asked for (plugin, bundle, document, report)
+- anything the user named or asked to keep
+- environments and installs a deliverable depends on (e.g. a conda env)
+- tracked content of a git repository
+
+**State what you removed.** One line in the final message naming the scratch
+paths deleted, plus any by-product deliberately kept and why. If a probe script
+looks genuinely reusable, ask before keeping it rather than leaving it in place.
+
 ## DSH plugin management
 
 Every plugin installed on this machine is administered through the
