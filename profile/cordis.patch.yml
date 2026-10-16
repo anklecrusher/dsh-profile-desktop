@@ -516,6 +516,16 @@
         headers:
           Authorization: !!js '`Bearer ${process.env.TAVILY_API_KEY}`'
         toolCallTimeoutMs: 180000
+        # GitHub official remote extension server (OAuth-free: bearer PAT).
+        # Same lazy gateway as tavily: tools appear as mcp__github__<name> on first use;
+        # run `mcp({connect:"github"})` once to discover them.
+        # NOTE: @modelcontextprotocol/server-github is deprecated on npm — do NOT swap to it.
+      - serverName: github
+        transport: streamable-http
+        url: https://api.githubcopilot.com/mcp/
+        headers:
+          Authorization: !!js '`Bearer ${process.env.GITHUB_PERSONAL_ACCESS_TOKEN}`'
+        toolCallTimeoutMs: 120000
 - id: mnemon
   name: dsh-mnemon
   config:
@@ -570,3 +580,28 @@
     openaiCompatEditFormat: multipart
     openaiCompatEditExtra: {}
     showProviderPill: true
+
+# =============================================================================
+# DS BOT MOBILE BRIDGE — exposed through the Cloudflare Tunnel
+# =============================================================================
+# ds-bot's mobile bridge starts ONLY when `enabled: true` AND one of
+# publicUrl / certPath / keyPath / devAllowInsecure is set (see
+# ds-bot/src/mobile/index.js: `config.enabled === true && (config.publicUrl || ...)`).
+# Without publicUrl it just runs local.restore() and nothing listens on 8788.
+#
+# With publicUrl set and no certPath/keyPath, the bridge listens PLAINTEXT on
+# 127.0.0.1:8788 and refuses any non-loopback bind. The tunnel terminates TLS at
+# the Cloudflare edge, so the ingress must be `service: http://127.0.0.1:8788` --
+# writing https:// there yields WRONG_VERSION_NUMBER and a public 502. No
+# certificate has to be issued or trusted. publicUrl is what the phone dials.
+#
+# A patch row replaces the whole entry config, so if `bot` ever gains other
+# config keys they must be restated here.
+- id: bot
+  name: ds-bot
+  config:
+    mobile:
+      enabled: true
+      host: 127.0.0.1
+      port: 8788
+      publicUrl: https://bot.anklecrusher30.dpdns.org

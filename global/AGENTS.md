@@ -161,3 +161,68 @@ Note the division of labour: **this file and project `AGENTS.md` files are
 injected deterministically every turn; mnemon's Project Documents are retrieved
 only when searched.** A rule that must always apply belongs in an `AGENTS.md`,
 not only in mnemon. Mnemon is for accumulating context, not for guaranteeing it.
+
+## Web search and GitHub
+
+Two remote extension servers sit behind the lazy gateway (package
+`dsh-mcp-lazy`, row id `mcp-lazy`). Their tool metadata is cached on disk at
+`~/.dsh/storages/mcp-lazy/cache.json`, so `search`/`describe` work in a **fresh session
+with no prior connect** — reach for these first, never a web UI or a browser.
+
+### Tavily is the only working search channel
+
+```js
+mcp({ server: "tavily", tool: "tavily_search",
+      args: { query: "...", max_results: 6, search_depth: "advanced" } })
+```
+
+- The built-in `web_search` tool is **broken in this profile**: its `web` row names a
+  `searchProvider` that is not registered, and DSH does not fall back, so every
+  call returns `configured web provider "deepseek-official" is not registered`.
+- `web_fetch` also comes back empty for several sites (x.ai, docs.x.ai,
+  DuckDuckGo). When a page must be read and `web_fetch` fails, fall back to
+  `curl https://r.jina.ai/<url>`.
+- Cost: the gateway adds ~16-20 tokens per tool name plus a one-time discovery
+  call, so for a single known URL plain `curl` is still cheaper.
+  `tavily_research` is a deep-research call and can run for minutes
+  (`toolCallTimeoutMs` is 180000).
+
+### GitHub goes through the official MCP server
+
+```js
+mcp({ server: "github", tool: "get_me", args: {} })
+```
+
+49 tools, reachable as `github__<name>` (`list_issues`, `issue_read`,
+`list_pull_requests`, `pull_request_read`, `search_code`, `list_commits`,
+`get_file_contents`, ...).
+
+- Endpoint `https://api.githubcopilot.com/mcp/`; bearer PAT read from
+  `GITHUB_PERSONAL_ACCESS_TOKEN` in `$DSH_HOME/.env` — the same token the
+  `gh` CLI holds (account `anklecrusher`). There is no OAuth support in the
+  gateway, so a plaintext bearer PAT is the only path.
+- **Do not** follow the DSH docs example and install
+  `@modelcontextprotocol/server-github`: that package is deprecated on npm.
+  The hosted endpoint above is the replacement.
+- Writes (`issue_write`, `create_pull_request`, `merge_pull_request`,
+  `create_or_update_file`, `push_files`, ...) take effect **immediately with no
+  approval prompt**. Name the repo and the action before mutating anything, and
+  default to read-only.
+- Do not call `connect` as a ritual. Only connect when the cache is cold, i.e.
+  right after a server was added.
+
+### Tool-call shape — a mistake already made once
+
+`server` and `tool` are two separate fields:
+
+```js
+mcp({ server: "github", tool: "list_issues", args: {...} })   // correct
+mcp({ tool: "github__list_issues", args: {...} })             // WRONG
+```
+
+Omitting `server` does not raise an error — the gateway answers with a plain
+status summary, which reads like a successful call. If a call returns a server
+list instead of data, this is why.
+
+> Names here were verified by character code, not by display: this UI can render
+> `mcp` as "extension". Trust the bytes in `node_modules/` and `cache.json`.
