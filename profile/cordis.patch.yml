@@ -437,6 +437,8 @@
         model: grok-4.6
       - provider: beeapi
         model: deepseek-v4.1-flash
+      - provider: beeapi-anthropic
+        model: claude-opus-5-5
 - id: permission
   name: "@deepseek-ai/dsh-permission-presets"
   config:
@@ -510,6 +512,44 @@
   config:
     idleTimeout: 10
     servers:
+      # =========================================================================
+      # OpenDesign (local design agent workspace) — 2026-10-18
+      # =========================================================================
+      # 22 MCP tools: projects/files, plus start_run/get_run/cancel_run, which
+      # are the actual generation surface. OpenDesign spawns its OWN agent
+      # (codex here) to produce decks / prototypes / video; DSH just commissions
+      # the run and polls it. Nothing is generated in-process.
+      #
+      # WHY A WRAPPER (mcp-bridge.mjs) instead of pointing at the exe:
+      #   - The packaged app is Electron-as-Node; without ELECTRON_RUN_AS_NODE=1
+      #     it opens a second GUI window instead of speaking MCP on stdio.
+      #   - OD_RESOURCE_ROOT must be pinned or list_skills answers []. Probed
+      #     both ways on this machine: unset → {"skills":[]}, set → 169 skills.
+      #   - The CLI entry path is versioned inside the install tree, so the
+      #     wrapper resolves it rather than hardcoding a release path here.
+      #
+      # The bridge starts the daemon itself when /api/health does not answer
+      # (start-daemon.mjs, detached, ~7s cold). It does NOT use OD's own
+      # OD_MCP_BOOTSTRAP_COMMAND hook: that shells out to powershell.exe and
+      # DSH's sandboxed child token forces ConstrainedLanguage, which breaks
+      # the script — verified, the same command is FullLanguage under a normal
+      # user token. Set OD_SKIP_DAEMON_AUTOSTART=1 to disable the autostart.
+      #
+      # lazy: OpenDesign costs ~0 tokens per request until a tool is called,
+      # which matters because it exposes 22 tools worth ~2.5k tokens.
+      - serverName: open-design
+        transport: stdio
+        # Absolute node path on purpose: the desktop app's own PATH does not
+        # contain scoop's nodejs-lts directory, and a bare `node` would then
+        # fail to spawn with ENOENT at the first tool call.
+        command: 'C:\Users\ankle crusher\scoop\apps\nodejs-lts\current\node.exe'
+        args:
+          - 'E:\GitHubWorkspace\own\opensource\open-design-mcp-bridge\mcp-bridge.mjs'
+        env:
+          OD_INSTALL_ROOT: 'D:\OpenDesign'
+          OD_DAEMON_URL: 'http://127.0.0.1:7456'
+        toolCallTimeoutMs: 600000
+        lifecycle: lazy
       - serverName: tavily
         transport: streamable-http
         url: https://mcp.tavily.com/mcp/
@@ -561,6 +601,16 @@
     recallMode: guided
     writebackMode: guided
     idleReviewMs: 30000
+    idleReview:
+      enabled: true
+      runtimeMemory: true
+      provider: spawn
+      fallback: spawn
+      agentTeams: scoped
+      minIntervalMs: 300000
+      maxPerSession: 20
+      maxContextChars: 24000
+      maxTokens: 4096
 - id: better-sidebar
   name: dsh-better-sidebar
   config:
