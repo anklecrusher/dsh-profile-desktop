@@ -9,13 +9,13 @@
     "@local/windows-mcp": "link:E:/GitHubWorkspace/own/opensource/windows-mcp-bundle",
     "ds-bot": "file:C:/Users/ankle crusher/.dsh/backups/ds-bot/ds-bot-0.1.2-r1.tgz",
     "dsh-at-file": "^0.6.3",
-    "dsh-better-sidebar": "^0.24.1",
-    "dsh-chat-import": "^0.24.0",
-    "dsh-image-gen": "0.8.5",
+    "dsh-better-sidebar": "0.28.0",
+    "dsh-chat-import": "0.25.2",
+    "dsh-image-gen": "0.9.1",
     "dsh-mcp-lazy": "0.4.1",
-    "dsh-mnemon": "^0.5.23",
-    "dsh-notify-me": "github:chromoany/dsh-notify-me#8f836ad1aeade0c6092561f66e7bf8d73d5cd2f1",
-    "dshmarket": "^1.66.8"
+    "dsh-mnemon": "0.5.31",
+    "dsh-notify-me": "github:chromoany/dsh-notify-me#ca8493f",
+    "dshmarket": "1.66.35"
   },
   "dsh": {
     "profile": {
@@ -35,7 +35,8 @@
         "@local/windows-mcp",
         "@local/dsh-beeapi-replay-compat",
         "@local/dsh-mole-tool",
-        "ds-bot"
+        "ds-bot",
+        "@deepseek-ai/dsh-experimental-voice-input-bundle"
       ]
     }
   }
