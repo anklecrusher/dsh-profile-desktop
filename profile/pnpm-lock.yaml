@@ -14,6 +14,9 @@ importers:
       '@local/dsh-gitbash-tool':
         specifier: link:E:/GitHubWorkspace/own/opensource/dsh-gitbash-tool
         version: link:E:/GitHubWorkspace/own/opensource/dsh-gitbash-tool
+      '@local/dsh-latex-tool':
+        specifier: link:E:/GitHubWorkspace/own/opensource/dsh-latex-tool
+        version: link:E:/GitHubWorkspace/own/opensource/dsh-latex-tool
       '@local/dsh-mole-tool':
         specifier: link:E:/GitHubWorkspace/own/opensource/dsh-mole-tool
         version: link:E:/GitHubWorkspace/own/opensource/dsh-mole-tool
@@ -32,9 +35,6 @@ importers:
       dsh-better-sidebar:
         specifier: 0.28.0
         version: 0.28.0
-      dsh-chat-import:
-        specifier: 0.25.2
-        version: 0.25.2(@deepseek-ai/schemastery@3.18.5)
       dsh-image-gen:
         specifier: 0.9.1
         version: 0.9.1(@deepseek-ai/schemastery@3.18.5)
@@ -670,18 +670,6 @@ packages:
       '@huanlin/dsh-plugin-better-locale':
         optional: true
 
-  dsh-chat-import@0.25.2:
-    resolution: {integrity: sha512-HebQGH1ef0xoYPDrNdPZfwkjL/BMXfUX9lNcpKRhWqsIlFP1Coy4mDJ/qqtSuvc1wUFJ+aR1BLp0gJb7Ch/4Ig==}
-    engines: {node: '>=22.13'}
-    hasBin: true
-    peerDependencies:
-      '@deepseek-ai/cordis': ^4.0.1
-      '@deepseek-ai/dsh': '>=0.1.5-rc.1'
-      '@deepseek-ai/dsh-client-locale': '>=0.1.0-rc.6'
-      '@deepseek-ai/dsh-tools': '>=0.1.0-rc.6 <0.3.0'
-      '@deepseek-ai/schemastery': '>=3.0.0'
-      react: '>=18.0.0'
-
   dsh-image-gen@0.9.1:
     resolution: {integrity: sha512-uW9CMPH/cd1mddv9b84AXD2SrHqqJ6Wgd2gC9EcLs6xdd1dzzkyYMECMwRtVwkfE56jVphzYeGmyiPVMbY9fYw==}
     engines: {node: ^22.19.0 || >=24.0.0}
@@ -959,9 +947,6 @@ packages:
 
   function-bind@1.1.2:
     resolution: {integrity: sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==}
-
-  fzstd@0.1.1:
-    resolution: {integrity: sha512-dkuVSOKKwh3eas5VkJy1AW1vFpet8TA/fGmVA5krThl8YcOVE/8ZIoEA1+U1vEn5ckxxhLirSdY837azmbaNHA==}
 
   get-caller-file@2.0.5:
     resolution: {integrity: sha512-DyFP3BM/3YHTQOCUL/w0OZHR0lpKeGrxotcHWcqNEdnltqFwXVfhEBQ94eIo34AfQpo0rGki4cyIiftY06h2Fg==}
@@ -2199,11 +2184,6 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  dsh-chat-import@0.25.2(@deepseek-ai/schemastery@3.18.5):
-    dependencies:
-      '@deepseek-ai/schemastery': 3.18.5
-      fzstd: 0.1.1
-
   dsh-image-gen@0.9.1(@deepseek-ai/schemastery@3.18.5):
     optionalDependencies:
       '@deepseek-ai/schemastery': 3.18.5
@@ -2428,8 +2408,6 @@ snapshots:
   fresh@2.0.0: {}
 
   function-bind@1.1.2: {}
-
-  fzstd@0.1.1: {}
 
   get-caller-file@2.0.5: {}
 

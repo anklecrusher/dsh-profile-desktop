@@ -4,13 +4,13 @@
   "dependencies": {
     "@local/dsh-beeapi-replay-compat": "link:E:/GitHubWorkspace/own/opensource/dsh-beeapi-replay-compat",
     "@local/dsh-gitbash-tool": "link:E:/GitHubWorkspace/own/opensource/dsh-gitbash-tool",
+    "@local/dsh-latex-tool": "link:E:/GitHubWorkspace/own/opensource/dsh-latex-tool",
     "@local/dsh-mole-tool": "link:E:/GitHubWorkspace/own/opensource/dsh-mole-tool",
     "@local/tavily-mcp": "link:E:/GitHubWorkspace/own/opensource/tavily-mcp-bundle",
     "@local/windows-mcp": "link:E:/GitHubWorkspace/own/opensource/windows-mcp-bundle",
     "ds-bot": "file:C:/Users/ankle crusher/.dsh/backups/ds-bot/ds-bot-0.1.2-r1.tgz",
     "dsh-at-file": "^0.6.3",
     "dsh-better-sidebar": "0.28.0",
-    "dsh-chat-import": "0.25.2",
     "dsh-image-gen": "0.9.1",
     "dsh-mcp-lazy": "0.4.1",
     "dsh-mnemon": "0.5.31",
@@ -30,13 +30,14 @@
         "dshmarket",
         "dsh-mnemon",
         "dsh-better-sidebar",
-        "dsh-chat-import",
         "dsh-image-gen",
         "@local/windows-mcp",
         "@local/dsh-beeapi-replay-compat",
         "@local/dsh-mole-tool",
         "ds-bot",
-        "@deepseek-ai/dsh-experimental-voice-input-bundle"
+        "@deepseek-ai/dsh-experimental-voice-input-bundle",
+        "@deepseek-ai/dsh-experimental-agent-team-profile",
+        "@local/dsh-latex-tool"
       ]
     }
   }
