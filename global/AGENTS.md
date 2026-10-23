@@ -169,23 +169,44 @@ Two remote extension servers sit behind the lazy gateway (package
 `~/.dsh/storages/mcp-lazy/cache.json`, so `search`/`describe` work in a **fresh session
 with no prior connect** — reach for these first, never a web UI or a browser.
 
-### Tavily is the only working search channel
+### Search: built-in `web_search` first (DeepSeek Search API), Tavily as backup
+
+```js
+web_search({ queries: ["..."] })            // default channel
+```
+
+`web_search` and `web_fetch` are wired to `@deepseek-ai/dsh-web-deepseek-api`
+since 2026-10-23: `POST https://api.deepseek.com/v1/tools/search` and
+`/v1/tools/fetch`, billed $0.75 per 1,000 successful requests (not per result,
+and not per token). They authenticate with `DEEPSEEK_API_KEY` from
+`$DSH_HOME/.env`, on api.deepseek.com — independent of the beeapi chat route.
+
+Reach for `web_search` first. Measured over 10 mixed zh/en queries on
+2026-10-23: 0.47 s/query, 76% of results carry a publication date, and each
+result carries `rerank_score` and `authority`; Tavily took 4.18 s and dated 0%.
+
+Fall back to Tavily only when one of these is true:
+
+- **The result set is dominated by one site.** DeepSeek averaged 2.9 of 10
+  results on a repeated domain, with one query at 5/10 from a single host.
+- **The fact needs a second opinion.** The two engines share almost nothing —
+  measured domain overlap Jaccard 0.07 — so Tavily is a genuinely independent
+  view, not a duplicate.
+- **DeepSeek fails** (402 balance, 429 rate limit, 5xx).
 
 ```js
 mcp({ server: "tavily", tool: "tavily_search",
       args: { query: "...", max_results: 6, search_depth: "advanced" } })
 ```
 
-- The built-in `web_search` tool is **broken in this profile**: its `web` row names a
-  `searchProvider` that is not registered, and DSH does not fall back, so every
-  call returns `configured web provider "deepseek-official" is not registered`.
-- `web_fetch` also comes back empty for several sites (x.ai, docs.x.ai,
-  DuckDuckGo). When a page must be read and `web_fetch` fails, fall back to
-  `curl https://r.jina.ai/<url>`.
 - Cost: the gateway adds ~16-20 tokens per tool name plus a one-time discovery
   call, so for a single known URL plain `curl` is still cheaper.
   `tavily_research` is a deep-research call and can run for minutes
   (`toolCallTimeoutMs` is 180000).
+- `web_fetch` now goes through the DeepSeek Fetch API and returns page Markdown.
+  If it fails on a specific site, fall back to `curl https://r.jina.ai/<url>`.
+- Both search tools draw from separate accounts, so one running out of balance
+  does not disable the other.
 
 ### GitHub goes through the official MCP server
 
