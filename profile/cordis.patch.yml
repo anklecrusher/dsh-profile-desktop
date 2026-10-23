@@ -458,8 +458,52 @@
   config:
     default: standard
     selectedDefault: standard
+# =============================================================================
+# WEB SEARCH -> DeepSeek Search & Fetch API  (2026-10-23)
+# =============================================================================
+# Why the shipped default was broken:
+#   dsh-base points `web.searchProvider` at `deepseek-official`, which only
+#   @deepseek-ai/dsh-web-search-deepseek registers. That row was disabled below,
+#   so no provider answered and every web_search call failed with
+#   `configured web provider "deepseek-official" is not registered`.
+#
+# Why this backend instead of re-enabling that row:
+#   @deepseek-ai/dsh-web-search-deepseek runs the search INSIDE a full Messages
+#   turn (one model call plus generated tokens per search) and needs an
+#   Anthropic-compatible server-side web_search tool, which beeapi does not
+#   implement -- it returns no web_search_tool_result block (probed 2026-10-23).
+#   @deepseek-ai/dsh-web-deepseek-api calls the dedicated retrieval endpoints
+#   instead: POST /v1/tools/search and /v1/tools/fetch, $0.75 per 1,000
+#   successful requests, and no auxiliary model tokens.
+#
+# Independence from the chat route is deliberate and verified:
+#   the Search/Fetch API lives on api.deepseek.com and authenticates with the
+#   official sk- key in $DSH_HOME/.env. beeapi provides neither -- its gateway
+#   answers 404 for /v1/tools/search, and beeapi keys are rejected by
+#   api.deepseek.com with 401. So chat stays on beeapi while search bills
+#   straight to the DeepSeek platform account. Neither side affects the other.
+#
+# Measured 2026-10-23 over 10 mixed zh/en queries, 10 results each:
+#   DeepSeek  0.47 s/query, 7.1 unique domains, avg rerank 2.18, 76% dated
+#   Tavily    4.18 s/query, 8.4 unique domains, 0% dated, Jaccard overlap 0.07
+#   -> DeepSeek is ~9x faster and ~10.7x cheaper; Tavily spreads across more
+#      domains. Both stay available: Tavily remains reachable through the `mcp`
+#      gateway for cross-checking, this row serves the native web_search tool.
+#
+# Billing is per successful request, not per result, so a larger `count` is
+# free; it only costs context tokens. 10 matches the shipped default.
+- id: web
+  config:
+    searchProvider: deepseek-search-api
+    fetchProvider: deepseek-fetch-api
 - id: web-search-deepseek
   disabled: true
+- id: web-deepseek-api
+  disabled: false
+  config:
+    apiKeyEnv: DEEPSEEK_API_KEY
+    baseURL: https://api.deepseek.com/v1/tools
+    count: 10
 - id: tool-bash
   disabled: true
 - id: gitbash-tool
