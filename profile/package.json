@@ -8,14 +8,16 @@
     "@local/dsh-mole-tool": "link:E:/GitHubWorkspace/own/opensource/dsh-mole-tool",
     "@local/tavily-mcp": "link:E:/GitHubWorkspace/own/opensource/tavily-mcp-bundle",
     "@local/windows-mcp": "link:E:/GitHubWorkspace/own/opensource/windows-mcp-bundle",
+    "@michengai/dsh-archive-manager": "1.1.8",
     "ds-bot": "file:C:/Users/ankle crusher/.dsh/backups/ds-bot/ds-bot-0.1.2-r1.tgz",
     "dsh-at-file": "^0.6.3",
     "dsh-better-sidebar": "0.28.0",
-    "dsh-image-gen": "0.9.1",
+    "dsh-context": "0.74.0",
+    "dsh-image-gen": "0.9.2",
     "dsh-mcp-lazy": "0.4.1",
-    "dsh-mnemon": "0.5.31",
-    "dsh-notify-me": "github:chromoany/dsh-notify-me#ca8493f",
-    "dshmarket": "1.66.35"
+    "dsh-mnemon": "0.5.34",
+    "dsh-notify-me": "github:chromoany/dsh-notify-me#abe8ea3",
+    "dshmarket": "1.67.0"
   },
   "dsh": {
     "profile": {
@@ -37,7 +39,9 @@
         "ds-bot",
         "@deepseek-ai/dsh-experimental-voice-input-bundle",
         "@deepseek-ai/dsh-experimental-agent-team-profile",
-        "@local/dsh-latex-tool"
+        "@local/dsh-latex-tool",
+        "dsh-context",
+        "@michengai/dsh-archive-manager"
       ]
     }
   }
