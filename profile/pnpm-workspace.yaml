@@ -13,4 +13,4 @@ minimumReleaseAgeExclude:
   - dsh-mnemon@0.5.31
   - dshmarket@1.66.35 || 1.67.0
   - dsh-context@0.74.0
-  - '@michengai/dsh-archive-manager@1.1.8'
+  - '@michengai/dsh-archive-manager@1.1.8 || 1.1.10'
