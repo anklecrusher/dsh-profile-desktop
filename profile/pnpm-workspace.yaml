@@ -10,7 +10,9 @@ minimumReleaseAgeExclude:
   - dsh-better-sidebar@0.28.0
   - dsh-mnemon-source-memory-spaces@0.5.21
   - dsh-mnemon-strategy-default-three-tier@0.5.9
-  - dsh-mnemon@0.5.31
-  - dshmarket@1.66.35 || 1.67.0
+  - dsh-mnemon@0.5.31 || 0.5.36
+  - dshmarket@1.66.35 || 1.67.0 || 1.71.1
   - dsh-context@0.74.0
-  - '@michengai/dsh-archive-manager@1.1.8 || 1.1.10'
+  - '@michengai/dsh-archive-manager@1.1.8 || 1.1.10 || 1.1.18'
+  - dsh-mnemon-provider-openviking@0.5.10
+  - dsh-mnemon-source-skills@0.5.3

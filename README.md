@@ -189,13 +189,13 @@ override earlier ones.
 | 2 | `@deepseek-ai/dsh-web-app` | host | 0.2.1-rc.3 | Web GUI |
 | 3 | `@local/dsh-gitbash-tool` | link → `own/opensource/dsh-gitbash-tool` | 1.0.0 | Real POSIX Git Bash tool. Replaces the disabled `tool-bash`. Windows-only. |
 | 4 | `@local/tavily-mcp` | link → `own/opensource/tavily-mcp-bundle` | 1.0.0 | Config-only bundle; contributes the native Tavily MCP row that the patch layer disables. |
-| 5 | `dsh-notify-me` | `github:chromoany/dsh-notify-me#abe8ea3` | 1.12.0 | Turn-completion / approval notifications. Pinned to a commit, not a tag. |
+| 5 | `dsh-notify-me` | `github:chromoany/dsh-notify-me#7634ef6` | 1.14.3 | Turn-completion / approval notifications. Pinned to a commit, not a tag. |
 | 6 | `dsh-at-file` | npm | 0.6.3 | Codex-style `@file` mentions in the composer. |
 | 7 | `dsh-mcp-lazy` | npm | 0.4.1 | Lazy MCP gateway — the only path that should serve Tavily, and the one that serves OpenDesign and GitHub. |
-| 8 | `dshmarket` | npm | 1.67.0 | In-GUI plugin market. Writes to `cordis.patch.yml`. |
-| 9 | `dsh-mnemon` | npm | 0.5.34 | Layered cross-session memory. 17 sub-components. See below. |
-| 10 | `dsh-better-sidebar` | npm | 0.28.0 | Right-sidebar workbench: file tree, editor, terminal, Git, side chat, subagent view. |
-| 11 | `dsh-image-gen` | npm | 0.9.2 | Image studio: generate, edit, compare. Mount row id is `image-gen`. |
+| 8 | `dshmarket` | npm | 1.71.1 | In-GUI plugin market. Writes to `cordis.patch.yml`. |
+| 9 | `dsh-mnemon` | npm | 0.5.36 | Layered cross-session memory. 17 sub-components. See below. |
+| 10 | `dsh-better-sidebar` | npm | 0.28.1 | Right-sidebar workbench: file tree, editor, terminal, Git, side chat, subagent view. |
+| 11 | `dsh-image-gen` | npm | 0.9.3 | Image studio: generate, edit, compare. Mount row id is `image-gen`. |
 | 12 | `@local/windows-mcp` | link → `own/opensource/windows-mcp-bundle` | 1.0.0 | Windows-MCP computer use through the native MCP client. Screenshots need the native image-admission chain — the lazy gateway flattens images to text. |
 | 13 | `@local/dsh-beeapi-replay-compat` | link → `own/opensource/dsh-beeapi-replay-compat` | 0.1.0 | Skips non-portable reasoning replay on BeeAPI DeepSeek Responses turns. |
 | 14 | `@local/dsh-mole-tool` | link → `own/opensource/dsh-mole-tool` | 1.0.0 | Drives the `mo` (Mole) CLI: disk cleanup, maintenance, app inventory, live status. |
@@ -203,8 +203,8 @@ override earlier ones.
 | 16 | `@deepseek-ai/dsh-experimental-voice-input-bundle` | host | 0.2.1-rc.3 | Voice input / speech-to-text. Models live under `~\.dsh\speech-to-text`. |
 | 17 | `@deepseek-ai/dsh-experimental-agent-team-profile` | host | 0.2.1-rc.3 | Agent-team profile that `ds-bot` builds on. |
 | 18 | `@local/dsh-latex-tool` | link → `own/opensource/dsh-latex-tool` | 1.0.0 | `latex_compile` / `latex_verify` / `latex_doctor`, plus the `latex-project-workflow` skill provider. |
-| 19 | `dsh-context` | npm | 0.74.0 | Context dashboard and `/context` command. |
-| 20 | `@michengai/dsh-archive-manager` | npm | 1.1.10 | Archive / restore / favourite / permanently delete sessions, and diagnose damaged session logs. |
+| 19 | `dsh-context` | npm | 0.77.0 | Context dashboard and `/context` command. |
+| 20 | `@michengai/dsh-archive-manager` | npm | 1.1.18 | Archive / restore / favourite / permanently delete sessions, and diagnose damaged session logs. |
 | 21 | `dsh-bilingual-reader` | `github:Johnblur/dsh-bilingual-reader` | 1.1.1 | better-sidebar companion: read a paper PDF and translate a selection with the LLM. |
 | 22 | `dsh-code-nav` | `github:AnakinCao/dsh-code-nav` | 0.1.0 | better-sidebar companion: syntax-highlighted code preview and symbol navigation. |
 | 23 | `dsh-md-export` | `github:hoshF/dsh-md-export` | 1.7.2 | Session-header button that exports the conversation as clean Markdown. |
