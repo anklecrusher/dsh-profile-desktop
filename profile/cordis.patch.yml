@@ -18,7 +18,7 @@
 - id: agent-default-model
   name: "@deepseek-ai/dsh-agent-default-model"
   config:
-    provider: beeapi
+    provider: qwen-token-plan-cn
     model: deepseek-v4.1-flash
     reasoningEffort: max
 - id: ui-settings-account
@@ -418,6 +418,83 @@
               xhigh: xhigh
               max: max
             maxTokens: 128000
+      # qwen-token-plan-cn — added 2026-10-25. The China-region token plan on an
+      # OpenAI-compatible surface (maas.qianwenaiapi.com), carrying the same
+      # DeepSeek / GLM / Kimi / MiniMax / Qwen model names on a second upstream.
+      # `agent-default-model` above points at it; beeapi stays configured so its
+      # gpt-* and claude-* models remain selectable in the picker.
+      #
+      # Its key is stored in the DSH credentials service as
+      # QWEN_TOKEN_PLAN_CN_API_KEY, NOT in $DSH_HOME/.env — re-enter it under
+      # Settings -> Account -> Credentials on a new machine, and do not expect a
+      # .env entry to satisfy `apiKeyEnv`.
+      #
+      # Note when editing this file through the Settings UI: the model provider
+      # editor rewrites the whole `llm-pi-ai` config from its own model, and the
+      # comments in this block disappeared once that way (2026-10-25). Restore
+      # them, or edit the YAML by hand.
+      qwen-token-plan-cn:
+        baseURL: https://maas.qianwenaiapi.com/compatible-mode/v1
+        models:
+          - id: deepseek-v4-pro
+            name: DeepSeek V4 Pro
+            contextWindow: 1000000
+            maxTokens: 384000
+            input:
+              - text
+          - id: deepseek-v4-pro-0813
+            name: DeepSeek V4 Pro 0813
+            contextWindow: 1000000
+            maxTokens: 384000
+            input:
+              - text
+          - id: deepseek-v4.1-flash
+            name: DeepSeek V4.1 Flash
+            contextWindow: 1000000
+            maxTokens: 384000
+            input:
+              - text
+              - image
+          - id: glm-5.2
+            name: GLM-5.2
+            contextWindow: 1000000
+            maxTokens: 131072
+            input:
+              - text
+          - id: glm-5.3
+            name: GLM-5.3
+            contextWindow: 1000000
+            maxTokens: 131072
+            input:
+              - text
+          - id: kimi-k2.7-code
+            name: Kimi K2.7 Code
+            contextWindow: 262144
+            maxTokens: 262144
+            input:
+              - text
+              - image
+          - id: MiniMax-M2.5
+            name: MiniMax-M2.5
+            contextWindow: 196608
+            maxTokens: 32768
+            input:
+              - text
+          - id: qwen3.8-flash
+            name: Qwen3.8 Flash
+            contextWindow: 1000000
+            maxTokens: 131072
+            input:
+              - text
+              - image
+          - id: qwen3.8-max
+            name: Qwen3.8 Max
+            contextWindow: 1000000
+            maxTokens: 131072
+            input:
+              - text
+              - image
+        apiKeyEnv: QWEN_TOKEN_PLAN_CN_API_KEY
 - id: session-log-deepseek
   name: "@deepseek-ai/dsh-session-log-deepseek"
   config:
