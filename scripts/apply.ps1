@@ -11,6 +11,10 @@
     anything. It backs up the files it overwrites so a mistake is still
     recoverable outside git.
 
+    It also restores vendor\ds-bot\ds-bot-0.1.3.tgz to
+    ~\.dsh\backups\ds-bot\ when that file is missing, because package.json
+    depends on it through a file: specifier and the directory is git-ignored.
+
     Restart the desktop app afterwards: dsh.profile.bundles is read at boot.
 
 .NOTES
@@ -103,6 +107,19 @@ foreach ($name in $GlobalFiles.Keys) {
 
     Copy-Item -LiteralPath $src -Destination $dst -Force
     $changed += "$name (global)"
+}
+
+# The profile's one out-of-tree runtime dependency. `ds-bot` is installed from a
+# local tarball under ~\.dsh\backups\ds-bot\, and git does not carry that
+# directory. Restore it when missing so a fresh clone can run `plugin install`.
+# An existing tarball is never overwritten: a local rebuild is not this repo's
+# business, and package.json already pins the exact version it wants.
+$VendorTarball = Join-Path $RepoRoot 'vendor\ds-bot\ds-bot-0.1.3.tgz'
+$VendorTarget = Join-Path $env:USERPROFILE '.dsh\backups\ds-bot\ds-bot-0.1.3.tgz'
+if ((Test-Path -LiteralPath $VendorTarball) -and -not (Test-Path -LiteralPath $VendorTarget)) {
+    New-Item -ItemType Directory -Path (Split-Path -Parent $VendorTarget) -Force | Out-Null
+    Copy-Item -LiteralPath $VendorTarball -Destination $VendorTarget -Force
+    $changed += 'ds-bot tarball -> .dsh\backups\ds-bot\'
 }
 
 Write-Host "updated ($($changed.Count)):" -ForegroundColor Green

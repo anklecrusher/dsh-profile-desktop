@@ -10,3 +10,5 @@
 *.png binary
 *.jpg binary
 *.ico binary
+*.tgz binary
+*.tar.gz binary

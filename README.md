@@ -9,9 +9,12 @@ under git so a bad write can be seen and reverted.
 
 - **Live profile:** `C:\Users\ankle crusher\.dsh\profiles\desktop`
 - **This repo:** `E:\GitHubWorkspace\own\opensource\dsh-profile-desktop`
-- **Tracked:** the `profile/` directory — five config files, ~56 KB total
-- **Not tracked:** `node_modules/` (42 MB, 122 packages), `*.bak-*`, `*.pre-*`,
-  `.plugin-manager/`, `.dsh-market/discovery-compatibility-v1.json`
+- **Tracked:** the `profile/` directory — five config files; `global/AGENTS.md`;
+  and `vendor/ds-bot/ds-bot-0.1.3.tgz`, the one dependency the profile cannot
+  fetch from a registry
+- **Not tracked:** `node_modules/` (718 MB, 327 top-level entries — rebuild it
+  from the lockfile), `*.bak-*`, `*.pre-*`, `.plugin-manager/`,
+  `.dsh-market/discovery-compatibility-v1.json`
 
 ## Sync workflow
 
@@ -46,7 +49,7 @@ renames it over the target. Its own source documents the consequence:
 > The rename also replaces a symlinked target itself instead of writing through
 > to its referent.
 
-Measured on this machine (Node 24.21.0, DSH 0.2.0-rc.2):
+Measured on this machine (Node 24.21.0, DSH 0.2.1-rc.3):
 
 | Method | Result |
 | --- | --- |
@@ -85,8 +88,10 @@ C:\...\.dsh\profiles\desktop\node_modules\@local\my-plugin
         -> E:\GitHubWorkspace\own\opensource\my-plugin
 ```
 
-This works. Both existing `@local/*` bundles are exactly this shape, and the
-source on `E:` is the only copy — verified 2026-10-04.
+This works. All six `@local/*` bundles are exactly this shape. Each source lives
+in its own repository under `E:\GitHubWorkspace\own\opensource\` and is now also
+pushed to GitHub (`anklecrusher/<repo>`); CROSS-PC-SYNC.md lists the seven
+repositories and their remotes.
 
 ### Why this is safe here, when the profile files are not
 
@@ -180,37 +185,34 @@ override earlier ones.
 
 | # | Bundle | Source | Version | Why |
 | --- | --- | --- | --- | --- |
-| 1 | `@deepseek-ai/dsh-base` | host | 0.2.0-rc.2 | Shipped core |
-| 2 | `@deepseek-ai/dsh-web-app` | host | 0.2.0-rc.2 | Web GUI |
-| 3 | `@local/dsh-gitbash-tool` | link → `own/opensource/dsh-gitbash-tool` | 1.0.0 | Real POSIX Git Bash tool for Windows. Replaces the disabled `tool-bash`. |
-| 4 | `@local/tavily-mcp` | link → `own/opensource/tavily-mcp-bundle` | 1.0.0 | Config-only bundle; contributes the native Tavily MCP row that **layer 7 disables**. |
-| 5 | `dsh-notify-me` | `github:chromoany/dsh-notify-me#8f836ad1` | 1.5.3 | Turn-completion notifications. Pinned to a commit, not a tag. |
+| 1 | `@deepseek-ai/dsh-base` | host | 0.2.1-rc.3 | Shipped core |
+| 2 | `@deepseek-ai/dsh-web-app` | host | 0.2.1-rc.3 | Web GUI |
+| 3 | `@local/dsh-gitbash-tool` | link → `own/opensource/dsh-gitbash-tool` | 1.0.0 | Real POSIX Git Bash tool. Replaces the disabled `tool-bash`. Windows-only. |
+| 4 | `@local/tavily-mcp` | link → `own/opensource/tavily-mcp-bundle` | 1.0.0 | Config-only bundle; contributes the native Tavily MCP row that the patch layer disables. |
+| 5 | `dsh-notify-me` | `github:chromoany/dsh-notify-me#abe8ea3` | 1.12.0 | Turn-completion / approval notifications. Pinned to a commit, not a tag. |
 | 6 | `dsh-at-file` | npm | 0.6.3 | Codex-style `@file` mentions in the composer. |
-| 7 | `dsh-mcp-lazy` | npm | 0.4.1 | Lazy MCP gateway — the only path that should serve Tavily. |
-| 8 | `dshmarket` | npm | 1.66.8 | In-GUI plugin market. Writes to `cordis.patch.yml`. |
-| 9 | `dsh-mnemon` | npm | 0.5.23 | Layered cross-session memory. 17 sub-components. See below. |
-| 10 | `dsh-better-sidebar` | npm | 0.24.1 | Right-sidebar workbench: file tree, editor, terminal, Git, side chat, subagent view. Requires DSH ≥ 0.2.0-rc.1. |
-| 11 | `dsh-chat-import` | npm | 0.24.0 | Import external agent transcripts as resumable DSH sessions. Mount row id is `import-claude`. |
-| 12 | `dsh-image-gen` | npm | 0.8.5 | Image studio: generate, edit, compare. Mount row id is `image-gen`. |
+| 7 | `dsh-mcp-lazy` | npm | 0.4.1 | Lazy MCP gateway — the only path that should serve Tavily, and the one that serves OpenDesign and GitHub. |
+| 8 | `dshmarket` | npm | 1.67.0 | In-GUI plugin market. Writes to `cordis.patch.yml`. |
+| 9 | `dsh-mnemon` | npm | 0.5.34 | Layered cross-session memory. 17 sub-components. See below. |
+| 10 | `dsh-better-sidebar` | npm | 0.28.0 | Right-sidebar workbench: file tree, editor, terminal, Git, side chat, subagent view. |
+| 11 | `dsh-image-gen` | npm | 0.9.2 | Image studio: generate, edit, compare. Mount row id is `image-gen`. |
+| 12 | `@local/windows-mcp` | link → `own/opensource/windows-mcp-bundle` | 1.0.0 | Windows-MCP computer use through the native MCP client. Screenshots need the native image-admission chain — the lazy gateway flattens images to text. |
+| 13 | `@local/dsh-beeapi-replay-compat` | link → `own/opensource/dsh-beeapi-replay-compat` | 0.1.0 | Skips non-portable reasoning replay on BeeAPI DeepSeek Responses turns. |
+| 14 | `@local/dsh-mole-tool` | link → `own/opensource/dsh-mole-tool` | 1.0.0 | Drives the `mo` (Mole) CLI: disk cleanup, maintenance, app inventory, live status. |
+| 15 | `ds-bot` | `file:` → vendored tarball | 0.1.3 | Bot teams (Main Bot, Bot-to-Bot, group chats) and the mobile bridge behind the Cloudflare Tunnel. See the `bot` row at the end of the patch layer. |
+| 16 | `@deepseek-ai/dsh-experimental-voice-input-bundle` | host | 0.2.1-rc.3 | Voice input / speech-to-text. Models live under `~\.dsh\speech-to-text`. |
+| 17 | `@deepseek-ai/dsh-experimental-agent-team-profile` | host | 0.2.1-rc.3 | Agent-team profile that `ds-bot` builds on. |
+| 18 | `@local/dsh-latex-tool` | link → `own/opensource/dsh-latex-tool` | 1.0.0 | `latex_compile` / `latex_verify` / `latex_doctor`, plus the `latex-project-workflow` skill provider. |
+| 19 | `dsh-context` | npm | 0.74.0 | Context dashboard and `/context` command. |
+| 20 | `@michengai/dsh-archive-manager` | npm | 1.1.10 | Archive / restore / favourite / permanently delete sessions, and diagnose damaged session logs. |
+| 21 | `dsh-bilingual-reader` | `github:Johnblur/dsh-bilingual-reader` | 1.1.1 | better-sidebar companion: read a paper PDF and translate a selection with the LLM. |
+| 22 | `dsh-code-nav` | `github:AnakinCao/dsh-code-nav` | 0.1.0 | better-sidebar companion: syntax-highlighted code preview and symbol navigation. |
+| 23 | `dsh-md-export` | `github:hoshF/dsh-md-export` | 1.7.2 | Session-header button that exports the conversation as clean Markdown. |
+| 24 | `@huanlin/dsh-plugin-better-sidebar-plugin-office` | npm | 0.2.0 | Office previewers (`.docx` / `.xlsx` / `.pptx`) for the better-sidebar editor. |
 
-`dsh-chat-import` is the one to reach for when a conversation started in Codex,
-Claude Code, Cursor, Gemini, opencode and about a dozen others should continue
-inside DSH. Notable behaviour, all verified against its own docs:
-
-- Imported sessions **follow the source project folder**. The host only accepts a
-  session whose `cwd` equals a workspace path, so the plugin resolves the landing
-  spot before creating anything: a `cwd` matching an existing workspace reuses it,
-  a local `cwd` gets a new workspace created for it (a new sidebar group appears),
-  and an unreachable `cwd` falls back to a dedicated import workspace. The
-  `workspaceMode` setting picks between `auto` (default), `per-project` and
-  `dedicated`. `/attach-workspaces` re-homes sessions that landed ungrouped.
-- Codex context compaction is imported as DSH's **native compaction checkpoint**,
-  so the model's view matches what Codex itself saw after compacting.
-- `preview: true` is a genuine read-only dry run — it parses and counts without
-  writing anything, which is how the import size is measured before committing.
-- Re-importing is idempotent: unchanged sources are skipped, grown sources append
-  only the new turns, and a source you already continued inside DSH becomes a new
-  copy rather than being merged into your own conversation.
+Removed on 2026-10-20: `dsh-chat-import` (was 0.25.2). Neither a dependency, a
+bundle row, nor a patch entry remains — the plugin is not installed on this
+machine any more, and a capture from the live profile cannot resurrect it.
 
 `dsh-image-gen` fills a gap this profile had already documented. The BeeAPI route
 comments in `profile/cordis.patch.yml` record that `gpt-image-2` / `gpt-image-2.5`
@@ -218,11 +220,13 @@ answer on `/images/generations` but are refused on `/responses`, with the note
 "DSH has no image-generation surface" — so the models were reachable but nothing
 in the host could call them. This plugin is that surface.
 
-Configure it under **Settings → Plugins → Image generation**. For this machine the
-provider to pick is **OpenAI Compatible**, with base URL `https://beeapi.dev/v1`
-and model `gpt-image-2`; the existing `BEEAPI_API_KEY` is already in DSH's
-credentials service, which is where this plugin stores keys too. "Test connection"
-then "Fetch models" confirms what the gateway actually exposes.
+Configure it under **Settings → Plugins → Image generation**. The live `image-gen`
+row at the end of the patch layer selects `provider: google-sub` — the logged-in
+Google subscription channel — and keeps the OpenAI-compatible fallback filled in
+for BeeAPI: base URL `https://beeapi.dev/v1`, model `gpt-image-2.5`, multipart
+edits. The plugin keeps its key in DSH's credentials service (the profile's
+`.credentials.yaml` carries a `DSH_IMAGE_GEN_OPENAI_COMPAT_KEY` ref), not in
+`.env`. "Test connection" then "Fetch models" confirms what the gateway exposes.
 
 Two things worth knowing before installing it: the npm tarball is 25.8 MB
 unpacked (`lib/client.js` alone is 4.9 MB — it bundles a tldraw canvas and the
@@ -239,8 +243,11 @@ disables its row when another enabled bundle already mounts the same package —
 relevant only if an aggregate bundle is ever added, and that bundle would have
 to come *before* this one in `dsh.profile.bundles` for the guard to see it.
 
-Layers 3 and 4 resolve by absolute path (`link:E:\...`), so this file set only
-works on this machine as-is.
+Seven bundle rows resolve by an absolute path — `link:E:\...` for rows 3, 4, 12,
+13, 14 and 18, and `file:C:\Users\ankle crusher\...` for row 15 — so this file
+set does not install on another machine unchanged. CROSS-PC-SYNC.md lists what
+to edit, and `scripts/apply.ps1` restores the one vendored tarball that would
+otherwise be missing.
 
 ## dsh-mnemon and its CLI
 
@@ -275,27 +282,35 @@ settings surface doing its job, not an outside rewrite.
 
 ### mnemon CLI
 
-Installed 2026-10-04 at
-`C:\Users\ankle crusher\AppData\Local\Programs\mnemon\mnemon.exe` (v0.2.10,
-Apache-2.0, a 13.8 MB Go binary — no Node runtime needed).
+The CLI is a Node package now, installed globally into the Scoop node prefix:
+`npm i -g @mnemon-dev/mnemon` puts `mnemon.cmd` in
+`C:\Users\ankle crusher\scoop\persist\nodejs-lts\bin\`, with the shim in
+`...\nodejs-lts\current\bin\`. Current version on this machine: **v0.2.13**.
+That directory is on `PATH`, so nothing else is required.
 
-That directory is deliberate: `findMnemonCommand` in
+This machine used to run the standalone Go binary at
+`%LOCALAPPDATA%\Programs\mnemon\mnemon.exe` (v0.2.10); that path no longer
+exists. `findMnemonCommand` in
 `dsh-mnemon-source-memory-spaces/native-cli.js` searches, in order,
 
 1. the `cliPath` setting,
 2. `$MNEMON_CLI_PATH`,
-3. `PATH` for `mnemon.exe` / `mnemon.cmd`,
+3. `PATH` for `mnemon.exe` / `mnemon.cmd` — how it resolves today,
 4. `%GOBIN%\mnemon.exe`, `%GOPATH%\bin\mnemon.exe`,
-   **`%LOCALAPPDATA%\Programs\mnemon\mnemon.exe`**, `%ProgramFiles%\mnemon\mnemon.exe`.
+   `%LOCALAPPDATA%\Programs\mnemon\mnemon.exe`, `%ProgramFiles%\mnemon\mnemon.exe`.
 
-Option 4 is why no `PATH` edit was needed. Verify with:
+Verify with:
 
 ```powershell
+mnemon --version
 node --input-type=module -e "import {findMnemonCommand} from 'dsh-mnemon-source-memory-spaces/native-cli'; console.log(findMnemonCommand({}))"
 ```
 
-To upgrade, replace that `mnemon.exe` — or install the npm wrapper
-(`npm i -g @mnemon-dev/mnemon`) and let discovery find it on `PATH` instead.
+**Watch the data directory.** The plugin is configured with
+`dataDir: D:\Users\ankle crusher\Documents\.mnemon`, while the CLI defaults to
+`%USERPROFILE%\.mnemon`; a call without `--data-dir` writes to the other store.
+`C:\Users\ankle crusher\.mnemon\data` exists on this machine for that reason.
+Always pass the configured `--data-dir` when driving memory spaces by hand.
 
 ### Idle checkpoint review — the token cost
 
@@ -406,6 +421,12 @@ Fix: pin the version explicitly, `add <pkg>@<version>`.
 `@deepseek-ai/dsh-*` are checked, with `includePrerelease: true`. `cordis` and
 `schemastery` are not gated. A rejected install rolls back `package.json`,
 `pnpm-lock.yaml` and `node_modules` automatically.
+
+**Editing model providers in the UI can rewrite the comment layer.** On
+2026-10-25 the `qwen-token-plan-cn` provider was added to `llm-pi-ai`, and the
+live file came back with every value intact but the explanatory comments inside
+that block gone. This repo still carries them. Run `git diff` after touching
+**Settings → Model providers**, and restore the comments if they vanished.
 
 **The `desktop` profile is reserved.** Bare `dsh --profile desktop <anything>`
 fails with *"profile desktop is managed exclusively by the Electron

@@ -36,9 +36,13 @@ the live configuration — DSH reads
    ignored on purpose. `node_modules` is rebuilt from `pnpm-lock.yaml`; the
    timestamped backups are DSH's own recovery aids, not history.
 
-5. **`link:E:\...` specs are machine-specific.** `@local/dsh-gitbash-tool` and
-   `@local/tavily-mcp` resolve by absolute path. Cloning this repo elsewhere
-   needs those paths to exist, or those two bundles edited out.
+5. **`link:E:\...` and `file:C:\...` specs are machine-specific.** Six
+   `@local/*` bundles (`dsh-gitbash-tool`, `tavily-mcp`, `windows-mcp`,
+   `dsh-beeapi-replay-compat`, `dsh-mole-tool`, `dsh-latex-tool`) and the
+   `ds-bot` tarball resolve by absolute path in `profile/package.json` and
+   `profile/pnpm-lock.yaml`. A clone elsewhere needs those sources at the same
+   paths, or those entries edited. `vendor/ds-bot/` carries the one tarball;
+   `scripts/apply.ps1` restores it to `~\.dsh\backups\ds-bot\` when missing.
 
 6. **For cross-computer migration, read [CROSS-PC-SYNC.md](CROSS-PC-SYNC.md)
    first.** It covers the profile, self-authored Bash tool, MCP configuration,
