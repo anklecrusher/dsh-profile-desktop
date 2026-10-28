@@ -732,6 +732,20 @@
       maxPerSession: 20
       maxContextChars: 24000
       maxTokens: 4096
+    skills:
+      evolution: true
+      allowCreate: true
+      allowUpdate: true
+      autoBacktest: true
+      hints: true
+      sidebar: false
+      reviewThreshold: 5
+      idleSeconds: 20
+      cooldownSeconds: 150
+      minConfidence: 0.6
+      expiryDays: 7
+      maxPendingPerSession: 5
+      casesPerRun: 8
 - id: better-sidebar
   name: dsh-better-sidebar
   config:

@@ -5,9 +5,15 @@ computer. The profile mirror is a template, not the live profile. The live
 profile is `%USERPROFILE%\.dsh\profiles\desktop`.
 
 Read "Machine inventory outside this repo" before assuming a clone is enough.
-As of 2026-10-27 all seven self-authored source repositories have public remotes,
-so a clone-based migration is possible — but they are separate repositories, not
-part of this one, and every credential still has to be re-entered by hand.
+As of 2026-10-28 all seven self-authored source repositories have public remotes
+and are pushed, so a clone-based migration is possible — but they are separate
+repositories, not part of this one, and every credential still has to be
+re-entered by hand.
+
+Step 1 of the Source list is not optional: `cordis.patch.yml` is a live file that
+DSH rewrites, so the mirror drifts whenever a plugin gains new config keys. On
+2026-10-28 the only drift was a `skills:` block that `dsh-mnemon` had written into
+its own row; capture first, then migrate.
 
 ## What this repo carries
 
@@ -55,6 +61,30 @@ repositories. All seven have public remotes as of 2026-10-27.
 `dsh-mcp-lazy`'s `open-design` entry also needs `D:\OpenDesign` (the GUI app) and
 the bridge's own patch step (`patch-opendesign-clm.mjs`) applied to that install.
 
+### Verified inventory, 2026-10-28
+
+Re-measured against the live machine. Use this as the baseline to diff against
+before a migration, rather than trusting the prose elsewhere in this file.
+
+| Fact | Value |
+| --- | --- |
+| DSH desktop | `0.2.1-rc.3` |
+| `dsh plugin --profile desktop list` | 20 packages |
+| `dependencies` / `dsh.profile.bundles` | 20 / 24 |
+| Absolute `link:` / `file:` specs in `package.json` | 7 |
+| Absolute machine paths in `pnpm-lock.yaml` | 13 |
+| Repo vs live drift | `cordis.patch.yml` only — `dsh-mnemon` had added a `skills:` block to its row; captured in the same commit. The other four profile files, `package.json` included, matched byte for byte |
+| `global/AGENTS.md` vs `%USERPROFILE%\.dsh\AGENTS.md` | identical (SHA-256) |
+| Self-authored repos | 7, all with `origin` on `anklecrusher/*`, all clean, all pushed |
+| Workspaces / archived sessions | 7 / 24 |
+| ds-bot | 4 bots |
+| `.agents\skills` junctions | 9 (8 listed above + `lieflat-paper`, see note) |
+
+The uninstalled-plugin audit came back clean: nothing in `dependencies` or
+`dsh.profile.bundles` refers to a package that is no longer present, the
+`dsh-chat-import` residue directory recorded below has since been removed, and
+no stray plugin directory is left under `.dsh\`.
+
 ### Other DSH profiles
 
 | Profile | What it is | Portable? |
@@ -68,7 +98,7 @@ the bridge's own patch step (`patch-opendesign-clm.mjs`) applied to that install
 | What | Where on this machine | Note |
 | --- | --- | --- |
 | DSH desktop | `D:\Users\ankle crusher\AppData\Local\Programs\DeepSeek Harness` | 0.2.1-rc.3 — note the `D:` install root |
-| Node | `C:\Users\ankle crusher\scoop\apps\nodejs-lts\current\node.exe` (24.21.0) | absolute path inside the `open-design` MCP row |
+| Node | `C:\Users\ankle crusher\scoop\apps\nodejs-lts\current\node.exe` (24.22.1) | absolute path inside the `open-design` MCP row |
 | Git Bash | `C:\Users\ankle crusher\scoop\apps\git\current\bin\bash.exe` | plugin probes standard Git for Windows, Scoop and PATH; no `bashPath` pinned |
 | TeX Live 2026 | `D:\Program Files (x86)\texlive\2026\bin\windows` | `latex_doctor` probes; ctex projects need xelatex |
 | Mole `mo` | `C:\Users\ankle crusher\scoop\shims\mo.exe` | `mole-tool` probes |
@@ -113,6 +143,17 @@ serves it. `.codex\skills` additionally carries `ajian-content-illustrations`,
 `storage-analyzer`, `thread-handoff`, `workflow-to-skill` and others; see
 `E:\GitHubWorkspace\_workspace\link-map.md` for the authoritative table.
 
+Two further junctions exist on this machine but are **deliberately not part of
+this runbook**:
+
+- `lieflat-paper` → `E:\GitHubWorkspace\external\forks\lieflat-paper`. Not yet
+  used as of 2026-10-28; the user chose not to carry it over. Recreate it on the
+  target only if it starts being used.
+- `ego-browser` → `C:\Users\ankle crusher\.local\share\ego\ego-skills`. This is
+  the one skill source that lives **outside `E:\GitHubWorkspace` and outside
+  git**, so a clone-based migration cannot restore it. Copy the directory by
+  hand (or reinstall Ego) if browser automation is wanted on the target.
+
 ### Data — a migration decision, not a profile sync
 
 | Store | Path | Size / content |
@@ -132,9 +173,13 @@ serves it. `.codex\skills` additionally carries `ajian-content-illustrations`,
 `dsh-chat-import` (0.25.2) was installed on 2026-10-05 and uninstalled on
 2026-10-20. Nothing in the profile references it any more: `dsh plugin --profile
 desktop list` reports exactly the 20 dependencies in `package.json`, there is no
-bundle row and no patch entry, and the README was corrected. The single leftover
-is its old data directory `%USERPROFILE%\.dsh\dsh-chat-import\` (`ignores.json`,
-`imports.json`, `scan-cache.json`), which is safe to delete.
+bundle row and no patch entry, and the README was corrected. Its leftover data
+directory `%USERPROFILE%\.dsh\dsh-chat-import\` (`ignores.json`,
+`imports.json`, `scan-cache.json`) has since been removed, so nothing about this
+plugin survives on disk.
+
+No other plugin has been uninstalled from this profile, and the 2026-10-28 audit
+found no orphaned dependency, bundle row or plugin directory to clean up.
 
 ## Source computer
 
@@ -248,6 +293,11 @@ is its old data directory `%USERPROFILE%\.dsh\dsh-chat-import\` (`ignores.json`,
     - `mcp` connects to tavily/github on first use, and no duplicate-server warning
     - `latex_doctor`, `mole_status`, `mnemon` and a `winmcp` screenshot all answer
     - ds-bot starts and the mobile bridge is reachable at the tunnel hostname
+    - the better-sidebar companions appear: `双语阅读` / `translator` tab
+      (`dsh-bilingual-reader`), code preview with an outline pane
+      (`dsh-code-nav`), docx/xlsx/pptx viewers (`@huanlin/...-office`), and an
+      `导出 MD` button in the conversation header (`dsh-md-export`)
+    - `设置 → 已归档会话` lists archived sessions (`@michengai/dsh-archive-manager`)
 
 ## Machine-specific MCP and tool rules
 
