@@ -5,7 +5,7 @@ computer. The profile mirror is a template, not the live profile. The live
 profile is `%USERPROFILE%\.dsh\profiles\desktop`.
 
 Read "Machine inventory outside this repo" before assuming a clone is enough.
-As of 2026-10-28 all seven self-authored source repositories have public remotes
+As of 2026-10-29 all eight self-authored source repositories have public remotes
 and are pushed, so a clone-based migration is possible — but they are separate
 repositories, not part of this one, and every credential still has to be
 re-entered by hand.
@@ -19,7 +19,7 @@ its own row; capture first, then migrate.
 
 | Path | What it is | Portable as-is? |
 | --- | --- | --- |
-| `profile/package.json` | 24 bundle rows, 20 dependencies | no — seven absolute `link:` / `file:` specs |
+| `profile/package.json` | 25 bundle rows, 21 dependencies | no — eight absolute `link:` / `file:` specs |
 | `profile/cordis.patch.yml` | the entire patch layer: model providers, MCP servers, mnemon, ds-bot mobile bridge, image-gen | mostly — holds a few machine paths |
 | `profile/pnpm-lock.yaml` | exact dependency graph | no — same absolute paths as `package.json` |
 | `profile/pnpm-workspace.yaml` | pnpm settings incl. `minimumReleaseAgeExclude` | yes |
@@ -45,7 +45,8 @@ GitHub read `.env` while the model routes and image-gen read the store.
 ### Self-authored bundles and tools — separate repositories
 
 The profile references these by absolute path; the code lives in its own
-repositories. All seven have public remotes as of 2026-10-27.
+repositories. All eight have public remotes (the last one,
+`dsh-formula-mathtype`, on 2026-10-29).
 
 | Bundle | Local path under `E:\GitHubWorkspace\own\opensource\` | Remote | State 2026-10-27 |
 | --- | --- | --- | --- |
@@ -54,6 +55,7 @@ repositories. All seven have public remotes as of 2026-10-27.
 | `@local/dsh-beeapi-replay-compat` | `dsh-beeapi-replay-compat` | `anklecrusher/dsh-beeapi-replay-compat` | committed + pushed 2026-10-27 |
 | `@local/dsh-mole-tool` | `dsh-mole-tool` | `anklecrusher/dsh-mole-tool` | pushed 2026-10-27 |
 | `@local/dsh-latex-tool` | `dsh-latex-tool` | `anklecrusher/dsh-latex-tool` | pushed 2026-10-27 |
+| `@local/dsh-formula-mathtype` | `dsh-formula-mathtype` | `anklecrusher/dsh-formula-mathtype` | pushed 2026-10-29 |
 | `@local/windows-mcp` | `windows-mcp-bundle` | `anklecrusher/windows-mcp-bundle` | committed + pushed 2026-10-27 |
 | OpenDesign MCP bridge (not a bundle) | `open-design-mcp-bridge` | `anklecrusher/open-design-mcp-bridge` | pushed 2026-10-27 |
 | `ds-bot` 0.1.3 | vendored in this repo | upstream `QingJ01/DS-Bot-App` | tarball committed here |
@@ -61,7 +63,7 @@ repositories. All seven have public remotes as of 2026-10-27.
 `dsh-mcp-lazy`'s `open-design` entry also needs `D:\OpenDesign` (the GUI app) and
 the bridge's own patch step (`patch-opendesign-clm.mjs`) applied to that install.
 
-### Verified inventory, 2026-10-28
+### Verified inventory, 2026-10-30
 
 Re-measured against the live machine. Use this as the baseline to diff against
 before a migration, rather than trusting the prose elsewhere in this file.
@@ -69,14 +71,14 @@ before a migration, rather than trusting the prose elsewhere in this file.
 | Fact | Value |
 | --- | --- |
 | DSH desktop | `0.2.1-rc.3` |
-| `dsh plugin --profile desktop list` | 20 packages |
-| `dependencies` / `dsh.profile.bundles` | 20 / 24 |
-| Absolute `link:` / `file:` specs in `package.json` | 7 |
-| Absolute machine paths in `pnpm-lock.yaml` | 13 |
-| Repo vs live drift | `cordis.patch.yml` only — `dsh-mnemon` had added a `skills:` block to its row; captured in the same commit. The other four profile files, `package.json` included, matched byte for byte |
+| `dsh plugin --profile desktop list` | 21 packages |
+| `dependencies` / `dsh.profile.bundles` | 21 / 25 |
+| Absolute `link:` / `file:` specs in `package.json` | 8 |
+| Absolute machine paths in `pnpm-lock.yaml` | 15 |
+| Repo vs live drift | none — all five profile files and `AGENTS.md` hash identical; the 2026-10-29 `dsh-formula-mathtype` install is committed |
 | `global/AGENTS.md` vs `%USERPROFILE%\.dsh\AGENTS.md` | identical (SHA-256) |
-| Self-authored repos | 7, all with `origin` on `anklecrusher/*`, all clean, all pushed |
-| Workspaces / archived sessions | 7 / 24 |
+| Self-authored repos | 8, all with `origin` on `anklecrusher/*`, all clean, all pushed |
+| Workspaces / archived sessions | 7 / 15 |
 | ds-bot | 4 bots |
 | `.agents\skills` junctions | 9 (8 listed above + `lieflat-paper`, see note) |
 
@@ -215,20 +217,20 @@ found no orphaned dependency, bundle row or plugin directory to clean up.
 
 1. Install the DSH desktop app (0.2.1-rc.3 or newer) and Git for Windows. Start
    DSH once so it creates `%USERPROFILE%\.dsh\profiles\desktop`, then close it.
-2. Clone this repo and the six self-authored repositories it links to:
+2. Clone this repo, the seven `@local` bundles and the OpenDesign bridge:
 
    ```powershell
    git clone https://github.com/anklecrusher/dsh-profile-desktop.git
    foreach ($p in 'dsh-gitbash-tool','tavily-mcp-bundle','windows-mcp-bundle',
                   'dsh-beeapi-replay-compat','dsh-mole-tool','dsh-latex-tool',
-                  'open-design-mcp-bridge') {
+                  'dsh-formula-mathtype','open-design-mcp-bridge') {
      git clone "https://github.com/anklecrusher/$p.git" "E:\GitHubWorkspace\own\opensource\$p"
    }
    ```
 
    `ds-bot` needs nothing here — its tarball is committed in this repo.
 3. Recreate the absolute paths. `package.json` and `pnpm-lock.yaml` contain, in
-   total, seven machine paths:
+   total, eight machine paths:
 
    ```text
    link:E:/GitHubWorkspace/own/opensource/dsh-gitbash-tool
@@ -237,6 +239,7 @@ found no orphaned dependency, bundle row or plugin directory to clean up.
    link:E:/GitHubWorkspace/own/opensource/dsh-beeapi-replay-compat
    link:E:/GitHubWorkspace/own/opensource/dsh-mole-tool
    link:E:/GitHubWorkspace/own/opensource/dsh-latex-tool
+   link:E:/GitHubWorkspace/own/opensource/dsh-formula-mathtype
    file:C:/Users/ankle crusher/.dsh/backups/ds-bot/ds-bot-0.1.3.tgz
    ```
 
@@ -285,13 +288,15 @@ found no orphaned dependency, bundle row or plugin directory to clean up.
     links point at them), install the mnemon CLI (`npm i -g @mnemon-dev/mnemon`),
     and copy whatever data from the table the user wants.
 12. Restart DSH and verify:
-    - the app boots with 24 bundles and no compatibility errors
-    - `dsh plugin --profile desktop list` reports 20 packages
+    - the app boots with 25 bundles and no compatibility errors
+    - `dsh plugin --profile desktop list` reports 21 packages
     - a harmless UTF-8 check: `printf '%s\n' '中文 UTF-8'`
     - a model turn works on the default route (`qwen-token-plan-cn`,
       `deepseek-v4.1-flash`) — if it fails, `QWEN_TOKEN_PLAN_CN_API_KEY` is missing
     - `mcp` connects to tavily/github on first use, and no duplicate-server warning
     - `latex_doctor`, `mole_status`, `mnemon` and a `winmcp` screenshot all answer
+    - `formula_insert` returns a LaTeX string and the `Ctrl+Alt+F` hotkey path works
+      (needs MathType 7 + Word/PowerPoint)
     - ds-bot starts and the mobile bridge is reachable at the tunnel hostname
     - the better-sidebar companions appear: `双语阅读` / `translator` tab
       (`dsh-bilingual-reader`), code preview with an outline pane

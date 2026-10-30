@@ -88,9 +88,9 @@ C:\...\.dsh\profiles\desktop\node_modules\@local\my-plugin
         -> E:\GitHubWorkspace\own\opensource\my-plugin
 ```
 
-This works. All six `@local/*` bundles are exactly this shape. Each source lives
+This works. All seven `@local/*` bundles are exactly this shape. Each source lives
 in its own repository under `E:\GitHubWorkspace\own\opensource\` and is now also
-pushed to GitHub (`anklecrusher/<repo>`); CROSS-PC-SYNC.md lists the seven
+pushed to GitHub (`anklecrusher/<repo>`); CROSS-PC-SYNC.md lists the eight
 repositories and their remotes.
 
 ### Why this is safe here, when the profile files are not
@@ -203,12 +203,13 @@ override earlier ones.
 | 16 | `@deepseek-ai/dsh-experimental-voice-input-bundle` | host | 0.2.1-rc.3 | Voice input / speech-to-text. Models live under `~\.dsh\speech-to-text`. |
 | 17 | `@deepseek-ai/dsh-experimental-agent-team-profile` | host | 0.2.1-rc.3 | Agent-team profile that `ds-bot` builds on. |
 | 18 | `@local/dsh-latex-tool` | link → `own/opensource/dsh-latex-tool` | 1.0.0 | `latex_compile` / `latex_verify` / `latex_doctor`, plus the `latex-project-workflow` skill provider. |
-| 19 | `dsh-context` | npm | 0.77.0 | Context dashboard and `/context` command. |
-| 20 | `@michengai/dsh-archive-manager` | npm | 1.1.18 | Archive / restore / favourite / permanently delete sessions, and diagnose damaged session logs. |
-| 21 | `dsh-bilingual-reader` | `github:Johnblur/dsh-bilingual-reader` | 1.1.1 | better-sidebar companion: read a paper PDF and translate a selection with the LLM. |
-| 22 | `dsh-code-nav` | `github:AnakinCao/dsh-code-nav` | 0.1.0 | better-sidebar companion: syntax-highlighted code preview and symbol navigation. |
-| 23 | `dsh-md-export` | `github:hoshF/dsh-md-export` | 1.7.2 | Session-header button that exports the conversation as clean Markdown. |
-| 24 | `@huanlin/dsh-plugin-better-sidebar-plugin-office` | npm | 0.2.0 | Office previewers (`.docx` / `.xlsx` / `.pptx`) for the better-sidebar editor. |
+| 19 | `@local/dsh-formula-mathtype` | link → `own/opensource/dsh-formula-mathtype` | 0.4.2 | Formula screenshot → SimpleTex OCR → real MathType OLE equation inserted into the active Word document or PowerPoint slide. Host-side tool + command; needs MathType 7 and a Python with requests/Pillow/numpy. |
+| 20 | `dsh-context` | npm | 0.77.0 | Context dashboard and `/context` command. |
+| 21 | `@michengai/dsh-archive-manager` | npm | 1.1.18 | Archive / restore / favourite / permanently delete sessions, and diagnose damaged session logs. |
+| 22 | `dsh-bilingual-reader` | `github:Johnblur/dsh-bilingual-reader` | 1.1.1 | better-sidebar companion: read a paper PDF and translate a selection with the LLM. |
+| 23 | `dsh-code-nav` | `github:AnakinCao/dsh-code-nav` | 0.1.0 | better-sidebar companion: syntax-highlighted code preview and symbol navigation. |
+| 24 | `dsh-md-export` | `github:hoshF/dsh-md-export` | 1.7.2 | Session-header button that exports the conversation as clean Markdown. |
+| 25 | `@huanlin/dsh-plugin-better-sidebar-plugin-office` | npm | 0.2.0 | Office previewers (`.docx` / `.xlsx` / `.pptx`) for the better-sidebar editor. |
 
 Removed on 2026-10-20: `dsh-chat-import` (was 0.25.2). Neither a dependency, a
 bundle row, nor a patch entry remains — the plugin is not installed on this
@@ -243,8 +244,8 @@ disables its row when another enabled bundle already mounts the same package —
 relevant only if an aggregate bundle is ever added, and that bundle would have
 to come *before* this one in `dsh.profile.bundles` for the guard to see it.
 
-Seven bundle rows resolve by an absolute path — `link:E:\...` for rows 3, 4, 12,
-13, 14 and 18, and `file:C:\Users\ankle crusher\...` for row 15 — so this file
+Eight bundle rows resolve by an absolute path — `link:E:\...` for rows 3, 4, 12,
+13, 14, 18 and 19, and `file:C:\Users\ankle crusher\...` for row 15 — so this file
 set does not install on another machine unchanged. CROSS-PC-SYNC.md lists what
 to edit, and `scripts/apply.ps1` restores the one vendored tarball that would
 otherwise be missing.
