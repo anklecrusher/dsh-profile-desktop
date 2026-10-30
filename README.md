@@ -189,13 +189,13 @@ override earlier ones.
 | 2 | `@deepseek-ai/dsh-web-app` | host | 0.2.1-rc.5 | Web GUI |
 | 3 | `@local/dsh-gitbash-tool` | link → `own/opensource/dsh-gitbash-tool` | 1.0.0 | Real POSIX Git Bash tool. Replaces the disabled `tool-bash`. Windows-only. |
 | 4 | `@local/tavily-mcp` | link → `own/opensource/tavily-mcp-bundle` | 1.0.0 | Config-only bundle; contributes the native Tavily MCP row that the patch layer disables. |
-| 5 | `dsh-notify-me` | `github:chromoany/dsh-notify-me#7634ef6` | 1.14.3 | Turn-completion / approval notifications. Pinned to a commit, not a tag. |
+| 5 | `dsh-notify-me` | `github:chromoany/dsh-notify-me#8f20b18` | 1.17.0 | Turn-completion / approval notifications. Pinned to a commit, not a tag. |
 | 6 | `dsh-at-file` | npm | 0.6.3 | Codex-style `@file` mentions in the composer. |
 | 7 | `dsh-mcp-lazy` | npm | 0.4.1 | Lazy MCP gateway — the only path that should serve Tavily, and the one that serves OpenDesign and GitHub. |
-| 8 | `dshmarket` | npm | 1.71.1 | In-GUI plugin market. Writes to `cordis.patch.yml`. |
-| 9 | `dsh-mnemon` | npm | 0.5.36 | Layered cross-session memory. 17 sub-components. See below. |
-| 10 | `dsh-better-sidebar` | npm | 0.28.1 | Right-sidebar workbench: file tree, editor, terminal, Git, side chat, subagent view. |
-| 11 | `dsh-image-gen` | npm | 0.9.3 | Image studio: generate, edit, compare. Mount row id is `image-gen`. |
+| 8 | `dshmarket` | npm | 1.73.5 | In-GUI plugin market. Writes to `cordis.patch.yml`. |
+| 9 | `dsh-mnemon` | npm | 0.5.37 | Layered cross-session memory. 18 sub-components. See below. |
+| 10 | `dsh-better-sidebar` | npm | 0.28.2 | Right-sidebar workbench: file tree, editor, terminal, Git, side chat, subagent view. |
+| 11 | `dsh-image-gen` | npm | 0.10.0 | Image studio: generate, edit, compare. Mount row id is `image-gen`. |
 | 12 | `@local/windows-mcp` | link → `own/opensource/windows-mcp-bundle` | 1.0.0 | Windows-MCP computer use through the native MCP client. Screenshots need the native image-admission chain — the lazy gateway flattens images to text. |
 | 13 | `@local/dsh-beeapi-replay-compat` | link → `own/opensource/dsh-beeapi-replay-compat` | 0.1.0 | Skips non-portable reasoning replay on BeeAPI DeepSeek Responses turns. |
 | 14 | `@local/dsh-mole-tool` | link → `own/opensource/dsh-mole-tool` | 1.0.0 | Drives the `mo` (Mole) CLI: disk cleanup, maintenance, app inventory, live status. |
@@ -204,8 +204,8 @@ override earlier ones.
 | 17 | `@deepseek-ai/dsh-experimental-agent-team-profile` | host | 0.2.1-rc.5 | Agent-team profile that `ds-bot` builds on. |
 | 18 | `@local/dsh-latex-tool` | link → `own/opensource/dsh-latex-tool` | 1.0.0 | `latex_compile` / `latex_verify` / `latex_doctor`, plus the `latex-project-workflow` skill provider. |
 | 19 | `@local/dsh-formula-mathtype` | link → `own/opensource/dsh-formula-mathtype` | 0.4.2 | Formula screenshot → SimpleTex OCR → real MathType OLE equation inserted into the active Word document or PowerPoint slide. Host-side tool + command; needs MathType 7 and a Python with requests/Pillow/numpy. |
-| 20 | `dsh-context` | npm | 0.77.0 | Context dashboard and `/context` command. |
-| 21 | `@michengai/dsh-archive-manager` | npm | 1.1.18 | Archive / restore / favourite / permanently delete sessions, and diagnose damaged session logs. |
+| 20 | `dsh-context` | npm | 0.78.2 | Context dashboard and `/context` command. |
+| 21 | `@michengai/dsh-archive-manager` | npm | 1.1.19 | Archive / restore / favourite / permanently delete sessions, and diagnose damaged session logs. |
 | 22 | `dsh-bilingual-reader` | `github:Johnblur/dsh-bilingual-reader` | 1.1.1 | better-sidebar companion: read a paper PDF and translate a selection with the LLM. |
 | 23 | `dsh-code-nav` | `github:AnakinCao/dsh-code-nav` | 0.1.0 | better-sidebar companion: syntax-highlighted code preview and symbol navigation. |
 | 24 | `dsh-md-export` | `github:hoshF/dsh-md-export` | 1.7.2 | Session-header button that exports the conversation as clean Markdown. |
@@ -415,7 +415,10 @@ silently resolve an older release; if that older release predates a peer-range
 update, DSH then refuses the install as incompatible. This happened with
 `dsh-mcp-lazy` (0.4.0 rejected, 0.4.1 accepted) and `dsh-mnemon` (0.5.24 was
 10.8 h old, so 0.5.23 installed instead — peer ranges verified identical first).
-Fix: pin the version explicitly, `add <pkg>@<version>`.
+Fix: pin the version explicitly, `add <pkg>@<version>`. Observed again on
+2026-10-30: pinning a <24 h release makes DSH append that version to
+`minimumReleaseAgeExclude` in `pnpm-workspace.yaml` itself and the install
+proceeds — so a growing exclude list is normal, not a hand-written override.
 
 **DSH gates installs on peer ranges.** In `@deepseek-ai/dsh-app-boot`'s
 `evaluatePluginCompatibility`, only peers named `@deepseek-ai/dsh` or
