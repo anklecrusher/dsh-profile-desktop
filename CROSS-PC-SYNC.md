@@ -25,7 +25,7 @@ its own row; capture first, then migrate.
 | `profile/pnpm-workspace.yaml` | pnpm settings incl. `minimumReleaseAgeExclude` | yes |
 | `profile/cordis.yml` | loader root (empty array) | yes |
 | `global/AGENTS.md` | user-global agent instructions, applied to every session | review machine paths first |
-| `vendor/ds-bot/ds-bot-0.1.3.tgz` | the only registry-less dependency; `apply.ps1` restores it | yes |
+| `vendor/ds-bot/ds-bot-0.1.4.tgz` | the only registry-less dependency; `apply.ps1` restores it | yes |
 | `scripts/apply.ps1`, `scripts/capture.ps1` | repo ↔ live profile sync | yes |
 
 ## What does NOT move automatically
@@ -58,7 +58,7 @@ repositories. All eight have public remotes (the last one,
 | `@local/dsh-formula-mathtype` | `dsh-formula-mathtype` | `anklecrusher/dsh-formula-mathtype` | pushed 2026-10-29 |
 | `@local/windows-mcp` | `windows-mcp-bundle` | `anklecrusher/windows-mcp-bundle` | committed + pushed 2026-10-27 |
 | OpenDesign MCP bridge (not a bundle) | `open-design-mcp-bridge` | `anklecrusher/open-design-mcp-bridge` | pushed 2026-10-27 |
-| `ds-bot` 0.1.3 | vendored in this repo | upstream `QingJ01/DS-Bot-App` | tarball committed here |
+| `ds-bot` 0.1.4 | vendored in this repo | upstream `QingJ01/DS-Bot-App` | tarball committed here |
 
 `dsh-mcp-lazy`'s `open-design` entry also needs `D:\OpenDesign` (the GUI app) and
 the bridge's own patch step (`patch-opendesign-clm.mjs`) applied to that install.
@@ -70,7 +70,7 @@ before a migration, rather than trusting the prose elsewhere in this file.
 
 | Fact | Value |
 | --- | --- |
-| DSH desktop | `0.2.1-rc.3` |
+| DSH desktop | `0.2.1-rc.5` (upgraded 2026-10-30) |
 | `dsh plugin --profile desktop list` | 21 packages |
 | `dependencies` / `dsh.profile.bundles` | 21 / 25 |
 | Absolute `link:` / `file:` specs in `package.json` | 8 |
@@ -79,7 +79,7 @@ before a migration, rather than trusting the prose elsewhere in this file.
 | `global/AGENTS.md` vs `%USERPROFILE%\.dsh\AGENTS.md` | identical (SHA-256) |
 | Self-authored repos | 8, all with `origin` on `anklecrusher/*`, all clean, all pushed |
 | Workspaces / archived sessions | 7 / 15 |
-| ds-bot | 4 bots |
+| ds-bot | 4 bots, plugin 0.1.4 |
 | `.agents\skills` junctions | 9 (8 listed above + `lieflat-paper`, see note) |
 
 The uninstalled-plugin audit came back clean: nothing in `dependencies` or
@@ -99,7 +99,7 @@ no stray plugin directory is left under `.dsh\`.
 
 | What | Where on this machine | Note |
 | --- | --- | --- |
-| DSH desktop | `D:\Users\ankle crusher\AppData\Local\Programs\DeepSeek Harness` | 0.2.1-rc.3 — note the `D:` install root |
+| DSH desktop | `D:\Users\ankle crusher\AppData\Local\Programs\DeepSeek Harness` | 0.2.1-rc.5 — note the `D:` install root |
 | Node | `C:\Users\ankle crusher\scoop\apps\nodejs-lts\current\node.exe` (24.22.1) | absolute path inside the `open-design` MCP row |
 | Git Bash | `C:\Users\ankle crusher\scoop\apps\git\current\bin\bash.exe` | plugin probes standard Git for Windows, Scoop and PATH; no `bashPath` pinned |
 | TeX Live 2026 | `D:\Program Files (x86)\texlive\2026\bin\windows` | `latex_doctor` probes; ctex projects need xelatex |
@@ -215,7 +215,7 @@ found no orphaned dependency, bundle row or plugin directory to clean up.
 
 ## Target computer
 
-1. Install the DSH desktop app (0.2.1-rc.3 or newer) and Git for Windows. Start
+1. Install the DSH desktop app (0.2.1-rc.5 or newer) and Git for Windows. Start
    DSH once so it creates `%USERPROFILE%\.dsh\profiles\desktop`, then close it.
 2. Clone this repo, the seven `@local` bundles and the OpenDesign bridge:
 
@@ -240,14 +240,14 @@ found no orphaned dependency, bundle row or plugin directory to clean up.
    link:E:/GitHubWorkspace/own/opensource/dsh-mole-tool
    link:E:/GitHubWorkspace/own/opensource/dsh-latex-tool
    link:E:/GitHubWorkspace/own/opensource/dsh-formula-mathtype
-   file:C:/Users/ankle crusher/.dsh/backups/ds-bot/ds-bot-0.1.3.tgz
+   file:C:/Users/ankle crusher/.dsh/backups/ds-bot/ds-bot-0.1.4.tgz
    ```
 
    If the target keeps the same drive layout and user name, nothing changes. If
    not, edit both files in the target checkout — **never commit target-only
    paths back to this mirror**.
 4. Restore the vendored tarball. `scripts/apply.ps1` copies
-   `vendor/ds-bot/ds-bot-0.1.3.tgz` to `%USERPROFILE%\.dsh\backups\ds-bot\` when
+   `vendor/ds-bot/ds-bot-0.1.4.tgz` to `%USERPROFILE%\.dsh\backups\ds-bot\` when
    it is missing, which matches the recorded path when the user is
    `ankle crusher`. Otherwise place it wherever step 3 points.
 5. Review `global/AGENTS.md` for paths, user name and tool locations. `apply.ps1`

@@ -10,7 +10,7 @@ under git so a bad write can be seen and reverted.
 - **Live profile:** `C:\Users\ankle crusher\.dsh\profiles\desktop`
 - **This repo:** `E:\GitHubWorkspace\own\opensource\dsh-profile-desktop`
 - **Tracked:** the `profile/` directory — five config files; `global/AGENTS.md`;
-  and `vendor/ds-bot/ds-bot-0.1.3.tgz`, the one dependency the profile cannot
+  and `vendor/ds-bot/ds-bot-0.1.4.tgz`, the one dependency the profile cannot
   fetch from a registry
 - **Not tracked:** `node_modules/` (718 MB, 327 top-level entries — rebuild it
   from the lockfile), `*.bak-*`, `*.pre-*`, `.plugin-manager/`,
@@ -185,8 +185,8 @@ override earlier ones.
 
 | # | Bundle | Source | Version | Why |
 | --- | --- | --- | --- | --- |
-| 1 | `@deepseek-ai/dsh-base` | host | 0.2.1-rc.3 | Shipped core |
-| 2 | `@deepseek-ai/dsh-web-app` | host | 0.2.1-rc.3 | Web GUI |
+| 1 | `@deepseek-ai/dsh-base` | host | 0.2.1-rc.5 | Shipped core |
+| 2 | `@deepseek-ai/dsh-web-app` | host | 0.2.1-rc.5 | Web GUI |
 | 3 | `@local/dsh-gitbash-tool` | link → `own/opensource/dsh-gitbash-tool` | 1.0.0 | Real POSIX Git Bash tool. Replaces the disabled `tool-bash`. Windows-only. |
 | 4 | `@local/tavily-mcp` | link → `own/opensource/tavily-mcp-bundle` | 1.0.0 | Config-only bundle; contributes the native Tavily MCP row that the patch layer disables. |
 | 5 | `dsh-notify-me` | `github:chromoany/dsh-notify-me#7634ef6` | 1.14.3 | Turn-completion / approval notifications. Pinned to a commit, not a tag. |
@@ -199,9 +199,9 @@ override earlier ones.
 | 12 | `@local/windows-mcp` | link → `own/opensource/windows-mcp-bundle` | 1.0.0 | Windows-MCP computer use through the native MCP client. Screenshots need the native image-admission chain — the lazy gateway flattens images to text. |
 | 13 | `@local/dsh-beeapi-replay-compat` | link → `own/opensource/dsh-beeapi-replay-compat` | 0.1.0 | Skips non-portable reasoning replay on BeeAPI DeepSeek Responses turns. |
 | 14 | `@local/dsh-mole-tool` | link → `own/opensource/dsh-mole-tool` | 1.0.0 | Drives the `mo` (Mole) CLI: disk cleanup, maintenance, app inventory, live status. |
-| 15 | `ds-bot` | `file:` → vendored tarball | 0.1.3 | Bot teams (Main Bot, Bot-to-Bot, group chats) and the mobile bridge behind the Cloudflare Tunnel. See the `bot` row at the end of the patch layer. |
-| 16 | `@deepseek-ai/dsh-experimental-voice-input-bundle` | host | 0.2.1-rc.3 | Voice input / speech-to-text. Models live under `~\.dsh\speech-to-text`. |
-| 17 | `@deepseek-ai/dsh-experimental-agent-team-profile` | host | 0.2.1-rc.3 | Agent-team profile that `ds-bot` builds on. |
+| 15 | `ds-bot` | `file:` → vendored tarball | 0.1.4 | Bot teams (Main Bot, Bot-to-Bot, group chats) and the mobile bridge behind the Cloudflare Tunnel. See the `bot` row at the end of the patch layer. |
+| 16 | `@deepseek-ai/dsh-experimental-voice-input-bundle` | host | 0.2.1-rc.5 | Voice input / speech-to-text. Models live under `~\.dsh\speech-to-text`. |
+| 17 | `@deepseek-ai/dsh-experimental-agent-team-profile` | host | 0.2.1-rc.5 | Agent-team profile that `ds-bot` builds on. |
 | 18 | `@local/dsh-latex-tool` | link → `own/opensource/dsh-latex-tool` | 1.0.0 | `latex_compile` / `latex_verify` / `latex_doctor`, plus the `latex-project-workflow` skill provider. |
 | 19 | `@local/dsh-formula-mathtype` | link → `own/opensource/dsh-formula-mathtype` | 0.4.2 | Formula screenshot → SimpleTex OCR → real MathType OLE equation inserted into the active Word document or PowerPoint slide. Host-side tool + command; needs MathType 7 and a Python with requests/Pillow/numpy. |
 | 20 | `dsh-context` | npm | 0.77.0 | Context dashboard and `/context` command. |
