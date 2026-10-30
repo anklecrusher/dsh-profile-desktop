@@ -8,13 +8,13 @@ minimumReleaseAgeExclude:
   - '@deepseek-ai/cosmokit@1.8.6'
   - '@deepseek-ai/schemastery@3.18.5'
   - dsh-better-sidebar@0.28.0
-  - dsh-mnemon-source-memory-spaces@0.5.21
+  - dsh-mnemon-source-memory-spaces@0.5.21 || 0.5.24
   - dsh-mnemon-strategy-default-three-tier@0.5.9
-  - dsh-mnemon@0.5.31 || 0.5.36
-  - dshmarket@1.66.35 || 1.67.0 || 1.71.1
-  - dsh-context@0.74.0
-  - '@michengai/dsh-archive-manager@1.1.8 || 1.1.10 || 1.1.18'
+  - dsh-mnemon@0.5.31 || 0.5.36 || 0.5.37
+  - dshmarket@1.66.35 || 1.67.0 || 1.71.1 || 1.73.5
+  - dsh-context@0.74.0 || 0.78.2
+  - '@michengai/dsh-archive-manager@1.1.8 || 1.1.10 || 1.1.18 || 1.1.19'
   - dsh-mnemon-provider-openviking@0.5.10
-  - dsh-mnemon-source-skills@0.5.3
+  - dsh-mnemon-source-skills@0.5.3 || 0.5.4
 allowBuilds:
   protobufjs: true

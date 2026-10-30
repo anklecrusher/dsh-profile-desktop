@@ -10,19 +10,19 @@
     "@local/dsh-mole-tool": "link:E:/GitHubWorkspace/own/opensource/dsh-mole-tool",
     "@local/tavily-mcp": "link:E:/GitHubWorkspace/own/opensource/tavily-mcp-bundle",
     "@local/windows-mcp": "link:E:/GitHubWorkspace/own/opensource/windows-mcp-bundle",
-    "@michengai/dsh-archive-manager": "1.1.18",
+    "@michengai/dsh-archive-manager": "1.1.19",
     "ds-bot": "file:C:/Users/ankle crusher/.dsh/backups/ds-bot/ds-bot-0.1.4.tgz",
     "dsh-at-file": "^0.6.3",
-    "dsh-better-sidebar": "0.28.1",
+    "dsh-better-sidebar": "0.28.2",
     "dsh-bilingual-reader": "github:Johnblur/dsh-bilingual-reader",
     "dsh-code-nav": "github:AnakinCao/dsh-code-nav",
-    "dsh-context": "0.77.0",
-    "dsh-image-gen": "0.9.3",
+    "dsh-context": "0.78.2",
+    "dsh-image-gen": "0.10.0",
     "dsh-mcp-lazy": "0.4.1",
     "dsh-md-export": "github:hoshF/dsh-md-export",
-    "dsh-mnemon": "0.5.36",
-    "dsh-notify-me": "github:chromoany/dsh-notify-me#7634ef6",
-    "dshmarket": "1.71.1"
+    "dsh-mnemon": "0.5.37",
+    "dsh-notify-me": "github:chromoany/dsh-notify-me#8f20b18843776c5bd31b58c18e63daa850c05195",
+    "dshmarket": "1.73.5"
   },
   "dsh": {
     "profile": {
