@@ -14,6 +14,9 @@ importers:
       '@local/dsh-beeapi-replay-compat':
         specifier: link:E:/GitHubWorkspace/own/opensource/dsh-beeapi-replay-compat
         version: link:E:/GitHubWorkspace/own/opensource/dsh-beeapi-replay-compat
+      '@local/dsh-formula-mathtype':
+        specifier: link:E:/GitHubWorkspace/own/opensource/dsh-formula-mathtype
+        version: link:E:/GitHubWorkspace/own/opensource/dsh-formula-mathtype
       '@local/dsh-gitbash-tool':
         specifier: link:E:/GitHubWorkspace/own/opensource/dsh-gitbash-tool
         version: link:E:/GitHubWorkspace/own/opensource/dsh-gitbash-tool

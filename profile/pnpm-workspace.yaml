@@ -16,3 +16,5 @@ minimumReleaseAgeExclude:
   - '@michengai/dsh-archive-manager@1.1.8 || 1.1.10 || 1.1.18'
   - dsh-mnemon-provider-openviking@0.5.10
   - dsh-mnemon-source-skills@0.5.3
+allowBuilds:
+  protobufjs: true
